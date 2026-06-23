@@ -1,0 +1,409 @@
+:root {
+  --bg: #1c1917;
+  --surface: #292524;
+  --border: #44403c;
+  --text: #e7e5e4;
+  --muted: #a8a29e;
+  --amber: #f59e0b;
+  --danger-bg: #450a0a;
+  --danger-text: #fca5a5;
+  --ok: #4ade80;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+}
+
+.wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+.eyebrow {
+  color: var(--amber);
+  font-size: 12px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin: 0 0 12px;
+}
+
+h1 {
+  font-size: 34px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: #fafaf9;
+}
+
+.sub {
+  color: var(--muted);
+  margin: 0 0 32px;
+}
+
+.saved {
+  margin-bottom: 32px;
+}
+
+.saved h3 {
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 500;
+  margin: 0 0 12px;
+}
+
+.saved ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.saved-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.saved-item:hover {
+  border-color: var(--amber);
+}
+
+.saved-title {
+  font-weight: 500;
+}
+
+.saved-date {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+textarea {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  color: var(--text);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--amber);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+button {
+  background: var(--amber);
+  color: #1c1917;
+  font-weight: 500;
+  font-size: 15px;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 20px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button.ghost {
+  background: transparent;
+  color: var(--muted);
+  padding: 8px 4px;
+}
+
+.error {
+  margin-top: 24px;
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+.savebar {
+  margin: 28px 0 4px;
+}
+
+.saved-badge {
+  color: var(--ok);
+  font-size: 14px;
+}
+
+.results {
+  margin-top: 24px;
+}
+
+.results section {
+  margin-bottom: 32px;
+}
+
+.cat-head {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.cat-head h2 {
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 500;
+  margin: 0;
+}
+
+.cat-head span {
+  margin-left: auto;
+  font-size: 13px;
+  color: #78716c;
+}
+
+.results ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.results li {
+  margin-bottom: 14px;
+}
+
+.results li.secret {
+  border: 1px dashed #b45309;
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+.nome-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nome-row strong {
+  color: #fafaf9;
+  font-weight: 500;
+}
+
+.badge {
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+.results li p {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* --- Briefing pre-sessione --- */
+.brief-section {
+  margin-bottom: 32px;
+}
+
+.brief-btn-row {
+  margin-bottom: 0;
+}
+
+.briefing {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+}
+
+.briefing h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fafaf9;
+}
+
+.brief-label {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin: 16px 0 6px;
+}
+
+.brief-text {
+  margin: 0;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.brief-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.brief-list li {
+  font-size: 14px;
+  color: var(--text);
+  padding: 3px 0 3px 16px;
+  position: relative;
+}
+
+.brief-list li::before {
+  content: "•";
+  color: var(--amber);
+  position: absolute;
+  left: 0;
+}
+
+.brief-list li strong {
+  color: #fafaf9;
+  font-weight: 500;
+}
+
+.brief-hook {
+  margin-top: 16px;
+  background: rgba(245, 158, 11, 0.12);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.brief-hook strong {
+  color: var(--amber);
+  font-weight: 500;
+}
+
+/* --- Login e barra utente --- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.user-email {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.auth input,
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.auth input:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  outline: none;
+  border-color: var(--amber);
+}
+
+.auth {
+  max-width: 420px;
+}
+
+.info {
+  margin-top: 16px;
+  background: rgba(74, 222, 128, 0.12);
+  color: var(--ok);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+/* --- Link tra login e registrazione --- */
+.auth-switch {
+  margin-top: 24px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.auth-switch a {
+  color: var(--amber);
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+/* --- Caricamento audio --- */
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 11px 18px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.upload-btn:hover {
+  border-color: var(--amber);
+}
+
+.upload-hint {
+  font-size: 13px;
+  color: var(--muted);
+}
