@@ -26,7 +26,7 @@ ${sessioniText}
 ---`;
 }
 
-export async function GET() {
+export async function GET(request) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -35,10 +35,17 @@ export async function GET() {
     return Response.json({ error: "Non autenticato" }, { status: 401 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const campaignId = searchParams.get("campaignId");
+  if (!campaignId) {
+    return Response.json({ vuoto: true });
+  }
+
   try {
     const { data: sessioni, error } = await supabase
       .from("sessions")
       .select("title, created_at, codex")
+      .eq("campaign_id", campaignId)
       .order("created_at", { ascending: true });
     if (error) throw error;
 

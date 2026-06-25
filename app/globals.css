@@ -407,3 +407,58 @@ input[type="password"]:focus {
   font-size: 13px;
   color: var(--muted);
 }
+
+/* --- Barra della campagna --- */
+.campaign-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.campaign-label {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.campaign-bar select {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 12px;
+  color: var(--text);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.campaign-bar select:focus {
+  outline: none;
+  border-color: var(--amber);
+}
+
+.new-campaign summary {
+  font-size: 14px;
+  color: var(--amber);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.new-campaign summary::-webkit-details-marker {
+  display: none;
+}
+
+.new-campaign-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.new-campaign-form input {
+  width: auto;
+  flex: 1;
+  min-width: 180px;
+}

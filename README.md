@@ -301,3 +301,51 @@ upload: se carichi un file enorme (es. un WAV non compresso da oltre 1 GB) e
 viene rifiutato, è quello. Soluzioni: registra in un formato già compresso
 (m4a/mp3, quello che usano di default i telefoni), oppure alza il limite dal
 piano Supabase. Con un file compresso normale non lo tocchi nemmeno.
+
+---
+
+## Multi-utente, pezzo 1: le campagne
+
+Primo mattone verso gli account dei giocatori. Da ora le sessioni vivono dentro
+una CAMPAGNA, non più sciolte sotto l'utente. È la base su cui poggeranno
+invito, ruoli e schede dei personaggi nei prossimi pezzi.
+
+### SQL da eseguire (SQL Editor di Supabase)
+
+```sql
+-- 1. Tabella delle campagne (ognuna ha un DM proprietario)
+create table campaigns (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz default now(),
+  name text not null,
+  dm_id uuid default auth.uid()
+);
+
+alter table campaigns enable row level security;
+
+create policy "Le proprie campagne (DM)"
+  on campaigns for all to authenticated
+  using (auth.uid() = dm_id)
+  with check (auth.uid() = dm_id);
+
+-- 2. Collega le sessioni a una campagna
+alter table sessions add column campaign_id uuid references campaigns(id) on delete cascade;
+```
+
+### Cosa cambia nell'app
+
+- Al primo accesso, se non hai campagne, l'app ti chiede di crearne una.
+- In alto compare un selettore: scegli la campagna attiva, o creane altre con
+  "+ Nuova".
+- Sessioni, salvataggio e briefing sono ora legati alla campagna selezionata.
+
+Nota: le sessioni di test salvate PRIMA di questo passo hanno campaign_id vuoto
+e non compaiono sotto nessuna campagna. Erano dati di prova: ignorale, oppure
+ripulisci con `delete from sessions where campaign_id is null;`
+
+### Prossimi mattoni (non ancora costruiti)
+
+2. Invito: un codice per far entrare i giocatori nella campagna.
+3. Ruoli: DM vs giocatore, con accessi diversi.
+4. Schede dei personaggi (i pg) compilate dai giocatori.
+5. Briefing senza spoiler per i giocatori.
