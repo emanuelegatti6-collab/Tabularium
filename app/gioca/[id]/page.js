@@ -9,11 +9,65 @@ const VUOTA = {
   nome: "",
   razza: "",
   classe: "",
+  livello: "",
   descrizione: "",
   background: "",
   note: "",
   avatar_url: "",
 };
+
+const RAZZE = [
+  "Umano", "Elfo", "Mezzelfo", "Nano", "Halfling", "Gnomo", "Mezzorco",
+  "Tiefling", "Dragonide", "Tabaxi", "Minotauro", "Naiade", "Aasimar",
+  "Goliath", "Tritone", "Genasi", "Goblin", "Bugbear", "Coboldo", "Altro",
+];
+const CLASSI = [
+  "Barbaro", "Bardo", "Chierico", "Druido", "Guerriero", "Ladro", "Mago",
+  "Monaco", "Paladino", "Ranger", "Stregone", "Warlock", "Artificiere", "Altro",
+];
+
+function I({ d, fill }) {
+  return (
+    <svg className="lbl-ico" viewBox="0 0 24 24" fill={fill ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      {d}
+    </svg>
+  );
+}
+const IconHorns = () => <I d={<path d="M5 14c-1-5 1-8 4-9 0 3 1 5 3 5s3-2 3-5c3 1 5 4 4 9" />} />;
+const IconSwords = () => <I d={<><path d="M4 4l8 8M20 4l-8 8" /><path d="M12 12l3 3M12 12l-3 3" /></>} />;
+const IconFace = () => <I d={<><circle cx="12" cy="8" r="4" /><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6" /></>} />;
+const IconBook = () => <I d={<><path d="M12 6C9 4 5 4 3 5v14c2-1 6-1 9 1 3-2 7-2 9-1V5c-2-1-6-1-9 1Z" /><path d="M12 6v14" /></>} />;
+const IconQuill = () => <I d={<><path d="M4 20s2-8 9-13c3-2 7-3 7-3s-1 4-3 7c-5 7-13 9-13 9z" /><path d="M4 20l5-5" /></>} />;
+const IconSave = () => <I d={<><path d="M5 4h11l3 3v13H5z" /><path d="M8 4v5h7" /><rect x="8" y="13" width="8" height="6" /></>} />;
+const IconTrash = () => <I d={<><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13" /></>} />;
+const IconCamera = () => <I d={<><path d="M4 8h3l2-2h6l2 2h3v11H4z" /><circle cx="12" cy="13" r="3.5" /></>} />;
+
+function D20Divider() {
+  return (
+    <div className="d20-divider">
+      <span className="d20-line" />
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round">
+        <polygon points="24,4 41,14 41,34 24,44 7,34 7,14" />
+        <polygon points="24,13 34,31 14,31" />
+        <path d="M24 4v9M41 14l-7 17M7 14l7 17M14 31l10 13M34 31 24 44" />
+      </svg>
+      <span className="d20-line" />
+    </div>
+  );
+}
+
+function Select({ value, onChange, options, placeholder }) {
+  // Mantieni il valore salvato anche se non è nella lista standard.
+  const opts = value && !options.includes(value) ? [value, ...options] : options;
+  return (
+    <select className="field-select" value={value} onChange={onChange}>
+      <option value="">{placeholder}</option>
+      {opts.map((o) => (
+        <option key={o} value={o}>{o}</option>
+      ))}
+    </select>
+  );
+}
 
 export default function GiocaCampagna() {
   const router = useRouter();
@@ -39,8 +93,6 @@ export default function GiocaCampagna() {
         return;
       }
       setUser(data.user);
-
-      // Verifica che l'utente sia membro di questa campagna e prendi il nome.
       const { data: camps } = await supabase.rpc("my_player_campaigns");
       const camp = (camps || []).find((c) => c.id === campaignId);
       if (!camp) {
@@ -48,8 +100,6 @@ export default function GiocaCampagna() {
         return;
       }
       setCampaignName(camp.name);
-
-      // Carica la propria scheda, se esiste.
       const { data: scheda } = await supabase
         .from("characters")
         .select("*")
@@ -60,6 +110,7 @@ export default function GiocaCampagna() {
           nome: scheda.nome || "",
           razza: scheda.razza || "",
           classe: scheda.classe || "",
+          livello: scheda.livello || "",
           descrizione: scheda.descrizione || "",
           background: scheda.background || "",
           note: scheda.note || "",
@@ -110,6 +161,7 @@ export default function GiocaCampagna() {
           nome: form.nome,
           razza: form.razza,
           classe: form.classe,
+          livello: form.livello,
           descrizione: form.descrizione,
           background: form.background,
           note: form.note,
@@ -145,37 +197,43 @@ export default function GiocaCampagna() {
 
   async function logout() {
     await supabase.auth.signOut();
-    router.push("/login");
+    router.push("/");
   }
 
   if (user === undefined || !ready) return null;
 
+  const sottotitolo = [form.razza, form.classe, form.livello ? `Livello ${form.livello}` : ""]
+    .filter(Boolean)
+    .join("  ·  ");
+
   return (
-    <main className="wrap">
-      <div className="topbar">
+    <main className="sheet-page">
+      <div className="sheet-topbar">
         <Link href="/campagne" className="back-link">
           ← Le tue campagne
         </Link>
+        <span className="sheet-topbar-title">Tabolarium · {campaignName}</span>
         <button className="ghost" onClick={logout}>
           Esci
         </button>
       </div>
 
-      <p className="eyebrow">Tabolarium · {campaignName}</p>
-      <h1>La tua scheda</h1>
-      <p className="sub">
-        Compila il tuo personaggio. Il Dungeon Master potrà leggerlo, e il
-        sistema lo riconoscerà nelle sessioni.
-      </p>
-
-      <div className="char-photo">
+      <div className="char-hero">
         {form.avatar_url ? (
-          <img src={form.avatar_url} alt="Personaggio" className="char-avatar" />
+          <img src={form.avatar_url} alt={form.nome} className="char-hero-img" />
         ) : (
-          <div className="char-avatar placeholder">?</div>
+          <div className="char-hero-empty">
+            <IconCamera />
+            <span>La foto del tuo personaggio</span>
+          </div>
         )}
-        <label className="upload-btn">
-          {uploadingPhoto ? "Carico la foto..." : "📷 Foto del personaggio"}
+        <label className="char-photo-btn">
+          <IconCamera />
+          {uploadingPhoto
+            ? "Carico..."
+            : form.avatar_url
+            ? "Cambia foto"
+            : "Carica foto"}
           <input
             type="file"
             accept="image/*"
@@ -186,89 +244,130 @@ export default function GiocaCampagna() {
         </label>
       </div>
 
-      <label className="label">Nome del personaggio</label>
-      <input
-        type="text"
-        value={form.nome}
-        onChange={(e) => aggiorna("nome", e.target.value)}
-        placeholder="Es. Garnox"
-      />
+      <div className="sheet-frame">
+        <span className="corner tl" />
+        <span className="corner tr" />
+        <span className="corner bl" />
+        <span className="corner br" />
 
-      <div className="char-row">
-        <div>
-          <label className="label">Razza</label>
-          <input
-            type="text"
-            value={form.razza}
-            onChange={(e) => aggiorna("razza", e.target.value)}
-            placeholder="Es. Minotauro"
+        <input
+          className="char-title-input"
+          value={form.nome}
+          onChange={(e) => aggiorna("nome", e.target.value)}
+          placeholder="Il nome del tuo eroe"
+        />
+        <div className="char-subtitle">
+          {sottotitolo || "Scegli razza, classe e livello"}
+        </div>
+
+        <div className="field-grid">
+          <div className="field">
+            <label className="field-label">
+              <IconHorns /> Razza
+            </label>
+            <Select
+              value={form.razza}
+              onChange={(e) => aggiorna("razza", e.target.value)}
+              options={RAZZE}
+              placeholder="Scegli la razza"
+            />
+          </div>
+          <div className="field">
+            <label className="field-label">
+              <IconSwords /> Classe
+            </label>
+            <Select
+              value={form.classe}
+              onChange={(e) => aggiorna("classe", e.target.value)}
+              options={CLASSI}
+              placeholder="Scegli la classe"
+            />
+          </div>
+          <div className="field field-narrow">
+            <label className="field-label">Livello</label>
+            <select
+              className="field-select"
+              value={form.livello}
+              onChange={(e) => aggiorna("livello", e.target.value)}
+            >
+              <option value="">—</option>
+              {Array.from({ length: 20 }, (_, i) => i + 1).map((n) => (
+                <option key={n} value={n}>{n}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="field">
+          <label className="field-label">
+            <IconFace /> Aspetto e descrizione
+          </label>
+          <textarea
+            value={form.descrizione}
+            onChange={(e) => aggiorna("descrizione", e.target.value)}
+            rows={3}
+            placeholder="Descrivi l'aspetto fisico, l'abbigliamento, tratti distintivi, tatuaggi, cicatrici, ecc..."
           />
         </div>
-        <div>
-          <label className="label">Classe</label>
-          <input
-            type="text"
-            value={form.classe}
-            onChange={(e) => aggiorna("classe", e.target.value)}
-            placeholder="Es. Barbaro"
+
+        <div className="field">
+          <label className="field-label">
+            <IconBook /> Background (la sua storia)
+          </label>
+          <textarea
+            value={form.background}
+            onChange={(e) => aggiorna("background", e.target.value)}
+            rows={4}
+            placeholder="Racconta la storia del personaggio, le sue origini, gli eventi che lo hanno segnato, le persone importanti, ecc..."
           />
         </div>
-      </div>
 
-      <label className="label">Descrizione / aspetto</label>
-      <textarea
-        value={form.descrizione}
-        onChange={(e) => aggiorna("descrizione", e.target.value)}
-        rows={3}
-      />
+        <div className="field">
+          <label className="field-label">
+            <IconQuill /> Note (legami, obiettivi personali, segreti)
+          </label>
+          <textarea
+            value={form.note}
+            onChange={(e) => aggiorna("note", e.target.value)}
+            rows={3}
+            placeholder="Legami con altri personaggi, obiettivi personali, desideri, paure, segreti o promesse fatte..."
+          />
+        </div>
 
-      <label className="label">Background (la sua storia)</label>
-      <textarea
-        value={form.background}
-        onChange={(e) => aggiorna("background", e.target.value)}
-        rows={4}
-      />
+        {error && <div className="error">{error}</div>}
 
-      <label className="label">Note (legami, obiettivi personali)</label>
-      <textarea
-        value={form.note}
-        onChange={(e) => aggiorna("note", e.target.value)}
-        rows={3}
-      />
-
-      {error && <div className="error">{error}</div>}
-
-      <div className="row" style={{ marginTop: "18px" }}>
-        <button onClick={salva} disabled={saving}>
-          {saving ? "Sto salvando..." : "Salva la scheda"}
-        </button>
-        {savedMsg && <span className="saved-badge">✓ Scheda salvata</span>}
-      </div>
-
-      {confirmingDelete ? (
-        <div className="confirm-delete" style={{ marginTop: "16px" }}>
-          <p>
-            Eliminare la tua scheda del personaggio? L'azione è irreversibile.
-          </p>
-          <div className="row">
-            <button className="danger-btn" onClick={eliminaScheda}>
-              Sì, elimina la scheda
-            </button>
-            <button className="ghost" onClick={() => setConfirmingDelete(false)}>
-              Annulla
+        <div className="sheet-actions">
+          <div className="sheet-actions-left">
+            {confirmingDelete ? (
+              <div className="confirm-inline">
+                <span>Eliminare la scheda?</span>
+                <button className="danger-btn" onClick={eliminaScheda}>
+                  Sì
+                </button>
+                <button className="ghost" onClick={() => setConfirmingDelete(false)}>
+                  No
+                </button>
+              </div>
+            ) : (
+              <button
+                className="ghost danger sheet-del"
+                onClick={() => setConfirmingDelete(true)}
+              >
+                <IconTrash /> Elimina scheda
+              </button>
+            )}
+          </div>
+          <div className="sheet-actions-right">
+            {savedMsg && <span className="saved-badge">✓ Salvata</span>}
+            <button className="sheet-save" onClick={salva} disabled={saving}>
+              <IconSave />
+              {saving ? "Salvataggio..." : "Salva la scheda"}
             </button>
           </div>
         </div>
-      ) : (
-        <div className="row" style={{ marginTop: "10px" }}>
-          <button
-            className="ghost danger"
-            onClick={() => setConfirmingDelete(true)}
-          >
-            Elimina scheda
-          </button>
-        </div>
-      )}
+      </div>
+
+      <D20Divider />
     </main>
   );
 }

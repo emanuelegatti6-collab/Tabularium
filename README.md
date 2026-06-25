@@ -541,3 +541,19 @@ create policy "avatars_lettura_pubblica"
    vedi la scheda del giocatore con la foto.
 4. Estrai una sessione in cui compare quel personaggio: il Codex non dovrebbe
    metterlo tra gli NPC, perché ora lo riconosce come PG del gruppo.
+
+---
+
+## Scheda del personaggio ridisegnata (+ campo Livello)
+
+La scheda del giocatore ora ha la foto come grande immagine in cima (sfumata
+nello sfondo), il nome come titolo, e i campi dentro una cornice dorata.
+Aggiunto il campo "Livello".
+
+### SQL da eseguire (SQL Editor di Supabase)
+
+```sql
+alter table characters add column if not exists livello text;
+```
+
+Una sola riga: aggiunge il livello alle schede. Tutto il resto è solo stile.
