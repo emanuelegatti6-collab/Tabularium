@@ -640,3 +640,17 @@ input[type="password"]:focus {
   color: var(--text);
   padding: 3px 0;
 }
+
+/* --- Invito a comparsa --- */
+.invite-area {
+  margin-bottom: 28px;
+}
+
+.invite-toggle {
+  padding: 8px 0;
+}
+
+.invite-area .invite-box {
+  margin-top: 12px;
+  margin-bottom: 0;
+}
