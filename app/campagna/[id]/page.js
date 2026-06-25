@@ -70,7 +70,6 @@ export default function CampagnaWorkspace() {
   const [copied, setCopied] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const [selectedChar, setSelectedChar] = useState(null);
-  const [selectedChar, setSelectedChar] = useState(null);
 
   const [transcript, setTranscript] = useState(ESEMPIO);
   const [loading, setLoading] = useState(false);
