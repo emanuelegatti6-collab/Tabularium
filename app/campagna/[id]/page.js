@@ -79,6 +79,7 @@ export default function CampagnaWorkspace() {
   const [saving, setSaving] = useState(false);
   const [sessions, setSessions] = useState([]);
   const [selectedSessionId, setSelectedSessionId] = useState(null);
+  const [confirmingSessionId, setConfirmingSessionId] = useState(null);
 
   const [briefing, setBriefing] = useState(null);
   const [briefingLoading, setBriefingLoading] = useState(false);
@@ -243,6 +244,23 @@ export default function CampagnaWorkspace() {
     setError(null);
   }
 
+  async function eliminaSessione(id) {
+    setError(null);
+    try {
+      const res = await fetch(`/api/sessions?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      setSessions((s) => s.filter((x) => x.id !== id));
+      setConfirmingSessionId(null);
+      if (selectedSessionId === id) {
+        setSelectedSessionId(null);
+        setCodex(null);
+        setSaved(false);
+      }
+    } catch (e) {
+      setError("Eliminazione della sessione fallita.");
+    }
+  }
+
   if (user === undefined || !ready) return null;
 
   return (
@@ -293,19 +311,52 @@ export default function CampagnaWorkspace() {
             ) : (
               <div className="session-list">
                 {sessions.map((s) => (
-                  <button
+                  <div
                     key={s.id}
                     className={
                       "session-item" +
                       (selectedSessionId === s.id ? " active" : "")
                     }
-                    onClick={() => apriSessione(s)}
                   >
-                    <span className="session-title">{s.title}</span>
-                    <span className="session-date">
-                      {new Date(s.created_at).toLocaleDateString("it-IT")}
-                    </span>
-                  </button>
+                    {confirmingSessionId === s.id ? (
+                      <div className="session-confirm">
+                        <span>Eliminare questa sessione?</span>
+                        <div>
+                          <button
+                            className="danger-btn"
+                            onClick={() => eliminaSessione(s.id)}
+                          >
+                            Sì, elimina
+                          </button>
+                          <button
+                            className="ghost"
+                            onClick={() => setConfirmingSessionId(null)}
+                          >
+                            Annulla
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <button
+                          className="session-open"
+                          onClick={() => apriSessione(s)}
+                        >
+                          <span className="session-title">{s.title}</span>
+                          <span className="session-date">
+                            {new Date(s.created_at).toLocaleDateString("it-IT")}
+                          </span>
+                        </button>
+                        <button
+                          className="session-del"
+                          title="Elimina sessione"
+                          onClick={() => setConfirmingSessionId(s.id)}
+                        >
+                          ✕
+                        </button>
+                      </>
+                    )}
+                  </div>
                 ))}
               </div>
             )}

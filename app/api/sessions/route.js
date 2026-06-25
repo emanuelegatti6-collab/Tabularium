@@ -162,3 +162,25 @@ async function mergeCodex(supabase, campaignId, codex) {
       .eq("id", u.id);
   }
 }
+
+export async function DELETE(request) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return Response.json({ error: "Non autenticato" }, { status: 401 });
+  }
+
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    if (!id) return Response.json({ error: "ID mancante" }, { status: 400 });
+
+    const { error } = await supabase.from("sessions").delete().eq("id", id);
+    if (error) throw error;
+    return Response.json({ ok: true });
+  } catch (e) {
+    return Response.json({ error: "Eliminazione fallita." }, { status: 500 });
+  }
+}

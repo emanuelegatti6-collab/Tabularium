@@ -1644,18 +1644,12 @@ button.plaque {
   padding-right: 4px;
 }
 .session-item {
-  width: 100%;
-  text-align: left;
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  align-items: stretch;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 11px 13px;
-  cursor: pointer;
-  color: var(--text);
-  box-shadow: none;
+  overflow: hidden;
 }
 .session-item:hover {
   border-color: var(--border-strong);
@@ -1663,6 +1657,48 @@ button.plaque {
 .session-item.active {
   border-color: var(--amber);
   background: rgba(212, 168, 67, 0.06);
+}
+.session-open {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 11px 13px;
+  cursor: pointer;
+  color: var(--text);
+}
+.session-del {
+  flex: 0 0 auto;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--border);
+  box-shadow: none;
+  color: var(--muted);
+  font-size: 14px;
+  padding: 0 13px;
+  cursor: pointer;
+}
+.session-del:hover {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.08);
+}
+.session-confirm {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 11px 13px;
+  font-size: 13px;
+  color: var(--text);
+}
+.session-confirm > div {
+  display: flex;
+  gap: 8px;
 }
 .session-title {
   font-family: var(--display);
