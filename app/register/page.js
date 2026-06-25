@@ -25,7 +25,7 @@ export default function Register() {
       setError("Registrazione fallita: " + error.message);
     } else if (data.session) {
       // Conferma email disattivata: l'account è già attivo e sei loggato.
-      router.push("/");
+      router.push("/campagne");
       router.refresh();
     } else {
       // Conferma email attiva: bisogna confermare prima di accedere.
@@ -37,7 +37,7 @@ export default function Register() {
 
   return (
     <main className="wrap auth">
-      <p className="eyebrow">Familiar</p>
+      <p className="eyebrow">Tabolarium</p>
       <h1>Crea il tuo account</h1>
       <p className="sub">Bastano un'email e una password per iniziare.</p>
 

@@ -24,14 +24,14 @@ export default function Login() {
     if (error) {
       setError("Accesso fallito: " + error.message);
     } else {
-      router.push("/");
+      router.push("/campagne");
       router.refresh();
     }
   }
 
   return (
     <main className="wrap auth">
-      <p className="eyebrow">Familiar</p>
+      <p className="eyebrow">Tabolarium</p>
       <h1>Bentornato</h1>
       <p className="sub">Accedi per ritrovare le tue campagne.</p>
 

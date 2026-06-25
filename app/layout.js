@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Familiar — Estrattore di Codex",
+  title: "Tabolarium — La memoria della tua campagna",
   description: "La memoria di campagna per Dungeon Master",
 };
 

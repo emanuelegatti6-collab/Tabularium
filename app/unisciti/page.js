@@ -60,7 +60,7 @@ export default function Unisciti() {
   return (
     <main className="wrap auth">
       <div className="topbar">
-        <Link href="/" className="back-link">
+        <Link href="/campagne" className="back-link">
           ← Le tue campagne
         </Link>
         <button className="ghost" onClick={logout}>
@@ -68,7 +68,7 @@ export default function Unisciti() {
         </button>
       </div>
 
-      <p className="eyebrow">Familiar</p>
+      <p className="eyebrow">Tabolarium</p>
       <h1>Unisciti a una campagna</h1>
       <p className="sub">
         Inserisci il codice d'invito che ti ha dato il tuo Dungeon Master.

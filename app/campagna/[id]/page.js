@@ -69,7 +69,7 @@ export default function CampagnaWorkspace() {
         const camps = res.ok ? await res.json() : [];
         const camp = camps.find((c) => c.id === campaignId);
         if (!camp) {
-          router.push("/");
+          router.push("/campagne");
           return;
         }
         setCampaignName(camp.name);
@@ -79,7 +79,7 @@ export default function CampagnaWorkspace() {
         caricaMembri();
         caricaSchede();
       } catch (e) {
-        router.push("/");
+        router.push("/campagne");
       }
     });
   }, []);
@@ -217,7 +217,7 @@ export default function CampagnaWorkspace() {
   return (
     <main className="wrap">
       <div className="topbar">
-        <Link href="/" className="back-link">
+        <Link href="/campagne" className="back-link">
           ← Le tue campagne
         </Link>
         <span className="user-email">{user.email}</span>
@@ -226,7 +226,7 @@ export default function CampagnaWorkspace() {
         </button>
       </div>
 
-      <p className="eyebrow">Familiar · {campaignName}</p>
+      <p className="eyebrow">Tabolarium · {campaignName}</p>
       <h1>L'estrattore di Codex</h1>
       <p className="sub">
         Prima di giocare, genera il briefing. Dopo, estrai e salva la nuova

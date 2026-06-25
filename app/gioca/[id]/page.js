@@ -44,7 +44,7 @@ export default function GiocaCampagna() {
       const { data: camps } = await supabase.rpc("my_player_campaigns");
       const camp = (camps || []).find((c) => c.id === campaignId);
       if (!camp) {
-        router.push("/");
+        router.push("/campagne");
         return;
       }
       setCampaignName(camp.name);
@@ -153,7 +153,7 @@ export default function GiocaCampagna() {
   return (
     <main className="wrap">
       <div className="topbar">
-        <Link href="/" className="back-link">
+        <Link href="/campagne" className="back-link">
           ← Le tue campagne
         </Link>
         <button className="ghost" onClick={logout}>
@@ -161,7 +161,7 @@ export default function GiocaCampagna() {
         </button>
       </div>
 
-      <p className="eyebrow">Familiar · {campaignName}</p>
+      <p className="eyebrow">Tabolarium · {campaignName}</p>
       <h1>La tua scheda</h1>
       <p className="sub">
         Compila il tuo personaggio. Il Dungeon Master potrà leggerlo, e il

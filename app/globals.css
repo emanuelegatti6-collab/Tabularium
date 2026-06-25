@@ -925,3 +925,66 @@ input[type="password"]:focus {
     transition: none !important;
   }
 }
+
+/* ============================================================
+   LANDING — la soglia d'ingresso
+   ============================================================ */
+.landing {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 64px 24px 80px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.landing-hero {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 0 60px rgba(212, 168, 67, 0.14), 0 16px 40px rgba(0, 0, 0, 0.6);
+  margin-bottom: 28px;
+}
+
+.landing-sub {
+  max-width: 480px;
+  margin: 0 auto 32px;
+}
+
+.landing-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.landing-btn {
+  font-family: var(--display);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  padding: 13px 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border-strong);
+  color: var(--amber);
+  background: transparent;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.landing-btn:hover {
+  color: var(--amber-bright);
+  border-color: var(--amber);
+}
+
+.landing-btn.primary {
+  background: linear-gradient(180deg, var(--amber-bright), var(--amber));
+  color: #241704;
+  box-shadow: inset 0 1px 0 rgba(255, 245, 220, 0.35),
+    0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.landing-btn.primary:hover {
+  background: linear-gradient(180deg, #f4d888, var(--amber-bright));
+}
