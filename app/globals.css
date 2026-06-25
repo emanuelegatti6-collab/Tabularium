@@ -1,13 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+
 :root {
-  --bg: #1c1917;
-  --surface: #292524;
-  --border: #44403c;
-  --text: #e7e5e4;
-  --muted: #a8a29e;
-  --amber: #f59e0b;
-  --danger-bg: #450a0a;
-  --danger-text: #fca5a5;
-  --ok: #4ade80;
+  --bg: #14100b;
+  --bg-2: #1d1710;
+  --surface: #221c14;
+  --surface-2: #2a2218;
+  --border: #4a3a24;
+  --border-strong: #6b5226;
+  --text: #ece2cf;
+  --muted: #a89878;
+  --amber: #d4a843;
+  --amber-bright: #ecca6e;
+  --danger-bg: #3a0f0a;
+  --danger-text: #f0a99a;
+  --ok: #9fcf7a;
+  --display: "Cinzel", Georgia, serif;
+  --body: "EB Garamond", Georgia, serif;
 }
 
 * {
@@ -16,35 +24,55 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(212, 168, 67, 0.1), transparent 60%),
+    radial-gradient(100% 100% at 50% 120%, rgba(0, 0, 0, 0.55), transparent 70%),
+    linear-gradient(180deg, var(--bg-2), var(--bg));
+  background-attachment: fixed;
   color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.6;
+  font-family: var(--body);
+  font-size: 18px;
+  line-height: 1.65;
 }
 
 .wrap {
-  max-width: 680px;
+  max-width: 720px;
   margin: 0 auto;
   padding: 48px 24px 80px;
 }
 
 .eyebrow {
   color: var(--amber);
+  font-family: var(--display);
   font-size: 12px;
-  letter-spacing: 0.25em;
+  letter-spacing: 0.35em;
   text-transform: uppercase;
-  margin: 0 0 12px;
+  margin: 0 0 14px;
 }
 
 h1 {
-  font-size: 34px;
-  font-weight: 600;
-  margin: 0 0 12px;
-  color: #fafaf9;
+  font-family: var(--display);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin: 0 0 14px;
+  color: var(--amber-bright);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* Filetto ornamentale sotto il titolo, come nel logo */
+h1::after {
+  content: "✦";
+  display: block;
+  color: var(--border-strong);
+  font-size: 13px;
+  margin-top: 10px;
+  letter-spacing: 0.5em;
 }
 
 .sub {
   color: var(--muted);
+  font-size: 18px;
   margin: 0 0 32px;
 }
 
@@ -129,14 +157,22 @@ textarea:focus {
 }
 
 button {
-  background: var(--amber);
-  color: #1c1917;
-  font-weight: 500;
-  font-size: 15px;
-  border: none;
-  border-radius: 10px;
-  padding: 11px 20px;
+  background: linear-gradient(180deg, var(--amber-bright), var(--amber));
+  color: #241704;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  padding: 11px 22px;
   cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 245, 220, 0.35),
+    0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+button:hover {
+  background: linear-gradient(180deg, #f4d888, var(--amber-bright));
 }
 
 button:disabled {
@@ -147,7 +183,17 @@ button:disabled {
 button.ghost {
   background: transparent;
   color: var(--muted);
+  font-family: var(--display);
+  font-size: 13px;
+  letter-spacing: 0.04em;
   padding: 8px 4px;
+  border: none;
+  box-shadow: none;
+}
+
+button.ghost:hover {
+  background: transparent;
+  color: var(--amber);
 }
 
 .error {
@@ -331,22 +377,26 @@ button.ghost {
 }
 
 .auth input,
+input[type="text"],
 input[type="email"],
 input[type="password"] {
   width: 100%;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 12px 14px;
   color: var(--text);
-  font-size: 15px;
+  font-family: var(--body);
+  font-size: 17px;
 }
 
 .auth input:focus,
+input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus {
   outline: none;
   border-color: var(--amber);
+  box-shadow: 0 0 0 1px rgba(212, 168, 67, 0.25);
 }
 
 .auth {
@@ -786,4 +836,92 @@ input[type="password"]:focus {
   border: 1px solid var(--border);
   margin-bottom: 28px;
   display: block;
+}
+
+/* ============================================================
+   TEMA FANTASY — rifiniture dorate
+   ============================================================ */
+
+/* Intestazioni di sezione: stile "inciso nella pietra" */
+.saved h3,
+.cat-head h2,
+.player-campaigns h3,
+.char-sheets h3,
+.invite-label,
+.campaign-label {
+  font-family: var(--display);
+  color: var(--amber);
+}
+
+/* Etichette dei campi: piccole maiuscole dorate */
+.label {
+  font-family: var(--display);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Carte: pannelli di pietra con bagliore dorato all'hover */
+.campaign-card,
+.invite-box,
+.char-card,
+.saved-item {
+  background: linear-gradient(180deg, rgba(255, 245, 220, 0.025), transparent),
+    var(--surface);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.campaign-card:hover,
+.saved-item:hover {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 1px rgba(212, 168, 67, 0.18),
+    0 8px 22px rgba(0, 0, 0, 0.4);
+}
+
+/* Nomi in evidenza in oro chiaro */
+.campaign-open,
+.char-card-name {
+  color: var(--amber-bright);
+  font-family: var(--display);
+  font-size: 18px;
+}
+
+/* Hero: cornice e bagliore dorato */
+.hero {
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 0 44px rgba(212, 168, 67, 0.12), 0 12px 34px rgba(0, 0, 0, 0.55);
+}
+
+/* Briefing: come una pergamena incorniciata d'oro */
+.briefing {
+  border-left: 3px solid var(--amber);
+}
+
+.briefing h3,
+.brief-label {
+  font-family: var(--display);
+}
+
+/* Codice d'invito: rune dorate */
+.invite-code {
+  color: var(--amber-bright);
+}
+
+/* Divisori del Codex più marcati */
+.cat-head {
+  border-bottom: 1px solid var(--border-strong);
+}
+
+/* Avatar dei personaggi: cornice dorata */
+.char-avatar,
+.char-card-avatar {
+  border-color: var(--border-strong);
+}
+
+/* Riduci il movimento per chi lo preferisce */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
 }
