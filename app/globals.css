@@ -654,3 +654,126 @@ input[type="password"]:focus {
   margin-top: 12px;
   margin-bottom: 0;
 }
+
+/* --- Home: campagne in cui giochi --- */
+.player-campaigns {
+  margin-bottom: 28px;
+}
+
+.player-campaigns h3 {
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.link-btn {
+  text-decoration: none;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+/* --- Scheda del personaggio (lato giocatore) --- */
+.char-photo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.char-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.char-avatar.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: var(--muted);
+  background: var(--surface);
+}
+
+.char-row {
+  display: flex;
+  gap: 14px;
+}
+
+.char-row > div {
+  flex: 1;
+}
+
+/* --- Schede dei personaggi (lato DM) --- */
+.char-sheets {
+  margin-bottom: 28px;
+}
+
+.char-sheets h3 {
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.char-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.char-card {
+  display: flex;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.char-card-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.char-card-avatar.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--muted);
+  background: var(--bg);
+}
+
+.char-card-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fafaf9;
+}
+
+.char-card-sub {
+  font-size: 13px;
+  color: var(--amber);
+  margin-bottom: 6px;
+}
+
+.char-card-body p {
+  font-size: 13px;
+  color: var(--text);
+  margin: 4px 0 0;
+  line-height: 1.5;
+}
+
+.char-card-bg {
+  color: var(--muted) !important;
+}

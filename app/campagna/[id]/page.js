@@ -38,6 +38,7 @@ export default function CampagnaWorkspace() {
   const [campaignName, setCampaignName] = useState("");
   const [inviteCode, setInviteCode] = useState("");
   const [members, setMembers] = useState([]);
+  const [characters, setCharacters] = useState([]);
   const [copied, setCopied] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
 
@@ -76,6 +77,7 @@ export default function CampagnaWorkspace() {
         setReady(true);
         caricaSessioni();
         caricaMembri();
+        caricaSchede();
       } catch (e) {
         router.push("/");
       }
@@ -93,6 +95,13 @@ export default function CampagnaWorkspace() {
     try {
       const res = await fetch(`/api/members?campaignId=${campaignId}`);
       if (res.ok) setMembers(await res.json());
+    } catch (e) {}
+  }
+
+  async function caricaSchede() {
+    try {
+      const res = await fetch(`/api/characters?campaignId=${campaignId}`);
+      if (res.ok) setCharacters(await res.json());
     } catch (e) {}
   }
 
@@ -148,7 +157,7 @@ export default function CampagnaWorkspace() {
       const res = await fetch("/api/extract", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transcript }),
+        body: JSON.stringify({ transcript, campaignId }),
       });
       if (!res.ok) throw new Error("errore");
       setCodex(await res.json());
@@ -345,6 +354,44 @@ export default function CampagnaWorkspace() {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {characters.length > 0 && (
+        <div className="char-sheets">
+          <h3>Schede dei personaggi</h3>
+          <div className="char-grid">
+            {characters.map((c) => (
+              <div key={c.id} className="char-card">
+                {c.avatar_url ? (
+                  <img
+                    src={c.avatar_url}
+                    alt={c.nome}
+                    className="char-card-avatar"
+                  />
+                ) : (
+                  <div className="char-card-avatar placeholder">?</div>
+                )}
+                <div className="char-card-body">
+                  <div className="char-card-name">{c.nome || "Senza nome"}</div>
+                  <div className="char-card-sub">
+                    {[c.razza, c.classe].filter(Boolean).join(" · ")}
+                  </div>
+                  {c.descrizione && <p>{c.descrizione}</p>}
+                  {c.background && (
+                    <p className="char-card-bg">
+                      <strong>Storia:</strong> {c.background}
+                    </p>
+                  )}
+                  {c.note && (
+                    <p className="char-card-bg">
+                      <strong>Note:</strong> {c.note}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

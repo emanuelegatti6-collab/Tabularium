@@ -442,3 +442,102 @@ all'app.
 
 3. Schede dei personaggi (i pg) create dai giocatori.
 4. Briefing senza spoiler visibile ai giocatori.
+
+---
+
+## Multi-utente, pezzo 3: schede dei personaggi (con foto)
+
+I giocatori, entrati nella campagna, la vedono nella loro home e ci cliccano
+per compilare la scheda del personaggio (con foto). Il DM legge tutte le schede,
+e l'estrazione del Codex riconosce i PG come membri del gruppo (non NPC).
+
+### SQL da eseguire (SQL Editor di Supabase)
+
+```sql
+-- Schede dei personaggi (una per giocatore per campagna)
+create table if not exists characters (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  campaign_id uuid references campaigns(id) on delete cascade,
+  user_id uuid default auth.uid(),
+  nome text,
+  razza text,
+  classe text,
+  descrizione text,
+  background text,
+  note text,
+  avatar_url text,
+  unique (campaign_id, user_id)
+);
+
+alter table characters enable row level security;
+
+-- Il giocatore gestisce la PROPRIA scheda, solo in campagne di cui è membro
+create policy "scheda_propria"
+  on characters for all to authenticated
+  using (user_id = auth.uid())
+  with check (
+    user_id = auth.uid()
+    and exists (
+      select 1 from members m
+      where m.campaign_id = characters.campaign_id and m.user_id = auth.uid()
+    )
+  );
+
+-- Il DM legge le schede delle SUE campagne
+create policy "scheda_dm_legge"
+  on characters for select to authenticated
+  using (
+    exists (
+      select 1 from campaigns c
+      where c.id = characters.campaign_id and c.dm_id = auth.uid()
+    )
+  );
+
+-- Le campagne in cui l'utente è entrato come giocatore (id + nome)
+create or replace function my_player_campaigns()
+returns table (id uuid, name text)
+language sql security definer set search_path = public
+as $$
+  select c.id, c.name
+  from campaigns c
+  join members m on m.campaign_id = c.id
+  where m.user_id = auth.uid();
+$$;
+```
+
+### SQL per le FOTO dei personaggi (storage)
+
+```sql
+-- Secchio pubblico per le foto dei personaggi (restano, non si cancellano)
+insert into storage.buckets (id, name, public)
+values ('avatars', 'avatars', true)
+on conflict (id) do nothing;
+
+create policy "avatars_carica_propri"
+  on storage.objects for insert to authenticated
+  with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "avatars_aggiorna_propri"
+  on storage.objects for update to authenticated
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "avatars_cancella_propri"
+  on storage.objects for delete to authenticated
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "avatars_lettura_pubblica"
+  on storage.objects for select
+  using (bucket_id = 'avatars');
+```
+
+### Come collaudarlo
+
+1. Col secondo account (giocatore) entra nella home: sotto "Campagne in cui
+   giochi" vedi la campagna in cui sei stato invitato. Cliccala.
+2. Compila la scheda, carica una foto, salva.
+3. Riaccedi col tuo account DM, apri la campagna: in "Schede dei personaggi"
+   vedi la scheda del giocatore con la foto.
+4. Estrai una sessione in cui compare quel personaggio: il Codex non dovrebbe
+   metterlo tra gli NPC, perché ora lo riconosce come PG del gruppo.

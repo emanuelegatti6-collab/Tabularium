@@ -6,9 +6,13 @@
 
 import { createClient } from "../../../utils/supabase/server";
 
-function costruisciPrompt(transcript) {
-  return `Sei il motore di memoria di un'app per Dungeon Master. Ricevi la trascrizione grezza di una sessione di gioco di ruolo, piena di chiacchiere fuori gioco (tiri di dado, regole, snack). Il tuo compito: ignorare il rumore ed estrarre SOLO gli elementi narrativi utili alla continuità della campagna.
+function costruisciPrompt(transcript, roster) {
+  const bloccoPg = roster
+    ? `\nI personaggi giocanti del gruppo (questi NON sono NPC, sono i protagonisti guidati dai giocatori):\n${roster}\nQuando compaiono nella trascrizione, riconoscili come membri del gruppo e NON inserirli tra gli NPC.\n`
+    : "";
 
+  return `Sei il motore di memoria di un'app per Dungeon Master. Ricevi la trascrizione grezza di una sessione di gioco di ruolo, piena di chiacchiere fuori gioco (tiri di dado, regole, snack). Il tuo compito: ignorare il rumore ed estrarre SOLO gli elementi narrativi utili alla continuità della campagna.
+${bloccoPg}
 Regole:
 - Le battute degli NPC sono pronunciate dal DM; promesse e decisioni sono dei giocatori.
 - Le battute scherzose o sarcastiche NON sono promesse vere: ignorale.
@@ -42,9 +46,31 @@ export async function POST(request) {
   }
 
   try {
-    const { transcript } = await request.json();
+    const { transcript, campaignId } = await request.json();
     if (!transcript || !transcript.trim()) {
       return Response.json({ error: "Trascrizione vuota" }, { status: 400 });
+    }
+
+    // Recupera i personaggi del gruppo, così l'estrazione li riconosce.
+    let roster = "";
+    if (campaignId) {
+      const { data: pgs } = await supabase
+        .from("characters")
+        .select("nome, razza, classe")
+        .eq("campaign_id", campaignId);
+      if (pgs && pgs.length > 0) {
+        roster = pgs
+          .filter((p) => p.nome)
+          .map(
+            (p) =>
+              `- ${p.nome}${
+                p.razza || p.classe
+                  ? ` (${[p.razza, p.classe].filter(Boolean).join(", ")})`
+                  : ""
+              }`
+          )
+          .join("\n");
+      }
     }
 
     const apiRes = await fetch("https://api.anthropic.com/v1/messages", {
@@ -59,7 +85,9 @@ export async function POST(request) {
         // Per confrontare la qualità, rimetti "claude-sonnet-4-6".
         model: "claude-haiku-4-5-20251001",
         max_tokens: 1500,
-        messages: [{ role: "user", content: costruisciPrompt(transcript) }],
+        messages: [
+          { role: "user", content: costruisciPrompt(transcript, roster) },
+        ],
       }),
     });
 

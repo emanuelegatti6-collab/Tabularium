@@ -11,6 +11,7 @@ export default function Home() {
 
   const [user, setUser] = useState(undefined);
   const [campaigns, setCampaigns] = useState([]);
+  const [playerCampaigns, setPlayerCampaigns] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [newName, setNewName] = useState("");
   const [confirmingId, setConfirmingId] = useState(null);
@@ -23,6 +24,7 @@ export default function Home() {
       } else {
         setUser(data.user);
         caricaCampagne();
+        caricaCampagneGiocate();
       }
     });
   }, []);
@@ -35,6 +37,13 @@ export default function Home() {
     } finally {
       setLoaded(true);
     }
+  }
+
+  async function caricaCampagneGiocate() {
+    try {
+      const { data } = await supabase.rpc("my_player_campaigns");
+      if (data) setPlayerCampaigns(data);
+    } catch (e) {}
   }
 
   async function creaCampagna() {
@@ -103,6 +112,27 @@ export default function Home() {
         Sei un giocatore?{" "}
         <Link href="/unisciti">Unisciti a una campagna con un codice</Link>
       </p>
+
+      {playerCampaigns.length > 0 && (
+        <div className="player-campaigns">
+          <h3>Campagne in cui giochi</h3>
+          <div className="campaign-list">
+            {playerCampaigns.map((c) => (
+              <div key={c.id} className="campaign-card">
+                <div className="campaign-card-main">
+                  <Link href={`/gioca/${c.id}`} className="campaign-open">
+                    {c.name}
+                  </Link>
+                  <span className="campaign-date">la tua scheda</span>
+                </div>
+                <Link href={`/gioca/${c.id}`} className="ghost link-btn">
+                  Apri →
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {campaigns.length === 0 ? (
         <p className="sub" style={{ marginTop: "24px" }}>
