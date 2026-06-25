@@ -69,6 +69,8 @@ export default function CampagnaWorkspace() {
   const [characters, setCharacters] = useState([]);
   const [copied, setCopied] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
+  const [selectedChar, setSelectedChar] = useState(null);
+  const [selectedChar, setSelectedChar] = useState(null);
 
   const [transcript, setTranscript] = useState(ESEMPIO);
   const [loading, setLoading] = useState(false);
@@ -317,7 +319,11 @@ export default function CampagnaWorkspace() {
               </div>
               <div className="heroes-row">
                 {characters.map((c) => (
-                  <div key={c.id} className="hero-card">
+                  <button
+                    key={c.id}
+                    className="hero-card"
+                    onClick={() => setSelectedChar(c)}
+                  >
                     {c.avatar_url ? (
                       <img
                         src={c.avatar_url}
@@ -330,7 +336,7 @@ export default function CampagnaWorkspace() {
                     <div className="hero-name">{c.nome || "—"}</div>
                     <div className="hero-class">{c.classe || ""}</div>
                     {c.livello && <div className="hero-lvl">Liv. {c.livello}</div>}
-                  </div>
+                  </button>
                 ))}
                 <button
                   className="hero-card hero-add"
@@ -539,6 +545,74 @@ export default function CampagnaWorkspace() {
 
         <D20Divider />
       </div>
+
+      {selectedChar && (
+        <div
+          className="char-modal-overlay"
+          onClick={() => setSelectedChar(null)}
+        >
+          <div className="char-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="char-modal-close"
+              onClick={() => setSelectedChar(null)}
+            >
+              ✕
+            </button>
+            <div className="char-modal-head">
+              {selectedChar.avatar_url ? (
+                <img
+                  src={selectedChar.avatar_url}
+                  alt={selectedChar.nome}
+                  className="char-modal-avatar"
+                />
+              ) : (
+                <div className="char-modal-avatar placeholder">?</div>
+              )}
+              <div>
+                <h3 className="char-modal-name">
+                  {selectedChar.nome || "Senza nome"}
+                </h3>
+                <div className="char-modal-sub">
+                  {[
+                    selectedChar.razza,
+                    selectedChar.classe,
+                    selectedChar.livello ? `Livello ${selectedChar.livello}` : "",
+                  ]
+                    .filter(Boolean)
+                    .join("  ·  ")}
+                </div>
+              </div>
+            </div>
+            <div className="char-modal-body">
+              {selectedChar.descrizione && (
+                <div className="char-modal-section">
+                  <div className="char-modal-label">Aspetto e descrizione</div>
+                  <p>{selectedChar.descrizione}</p>
+                </div>
+              )}
+              {selectedChar.background && (
+                <div className="char-modal-section">
+                  <div className="char-modal-label">Background</div>
+                  <p>{selectedChar.background}</p>
+                </div>
+              )}
+              {selectedChar.note && (
+                <div className="char-modal-section">
+                  <div className="char-modal-label">Note</div>
+                  <p>{selectedChar.note}</p>
+                </div>
+              )}
+              {!selectedChar.descrizione &&
+                !selectedChar.background &&
+                !selectedChar.note && (
+                  <p className="char-modal-empty">
+                    Questo giocatore non ha ancora compilato la scheda.
+                  </p>
+                )}
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
