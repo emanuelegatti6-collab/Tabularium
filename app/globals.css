@@ -930,63 +930,111 @@ input[type="password"]:focus {
    LANDING — la soglia d'ingresso
    ============================================================ */
 .landing {
-  max-width: 620px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 64px 24px 80px;
+  padding: 0 0 50px;
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: block;
 }
 
 .landing-hero {
+  display: block;
   width: 100%;
   height: auto;
-  border-radius: 16px;
-  border: 1px solid var(--border-strong);
-  box-shadow: 0 0 60px rgba(212, 168, 67, 0.14), 0 16px 40px rgba(0, 0, 0, 0.6);
-  margin-bottom: 28px;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 80%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 80%,
+    transparent 100%
+  );
 }
 
-.landing-sub {
-  max-width: 480px;
-  margin: 0 auto 32px;
+.landing-body {
+  max-width: 760px;
+  margin: -36px auto 0;
+  padding: 0 28px;
+}
+
+.landing-intro {
+  font-family: var(--body);
+  font-size: 19px;
+  color: var(--muted);
+  max-width: 560px;
+  margin: 38px auto 30px;
+  line-height: 1.7;
 }
 
 .landing-actions {
   display: flex;
-  gap: 14px;
+  gap: 20px;
   justify-content: center;
   flex-wrap: wrap;
+  margin-bottom: 8px;
 }
 
-.landing-btn {
-  font-family: var(--display);
-  font-size: 15px;
-  letter-spacing: 0.04em;
+/* Pulsanti con angoli tagliati */
+.cut-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   text-decoration: none;
-  padding: 13px 32px;
-  border-radius: 8px;
-  border: 1px solid var(--border-strong);
-  color: var(--amber);
-  background: transparent;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  font-family: var(--display);
+  font-size: 16px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  clip-path: polygon(
+    13px 0, calc(100% - 13px) 0, 100% 13px, 100% calc(100% - 13px),
+    calc(100% - 13px) 100%, 13px 100%, 0 calc(100% - 13px), 0 13px
+  );
 }
 
-.landing-btn:hover {
-  color: var(--amber-bright);
-  border-color: var(--amber);
-}
-
-.landing-btn.primary {
+.cut-btn.primary {
   background: linear-gradient(180deg, var(--amber-bright), var(--amber));
   color: #241704;
-  box-shadow: inset 0 1px 0 rgba(255, 245, 220, 0.35),
-    0 2px 6px rgba(0, 0, 0, 0.4);
+  padding: 17px 42px;
 }
 
-.landing-btn.primary:hover {
+.cut-btn.primary:hover {
   background: linear-gradient(180deg, #f4d888, var(--amber-bright));
+}
+
+.cut-btn.outline {
+  background: var(--amber);
+  padding: 2px;
+}
+
+.cut-btn.outline .cut-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #171009;
+  color: var(--amber);
+  padding: 15px 40px;
+  clip-path: polygon(
+    12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px),
+    calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px
+  );
+}
+
+.cut-btn.outline:hover .cut-inner {
+  color: var(--amber-bright);
+}
+
+.btn-ico {
+  width: 20px;
+  height: 20px;
 }
 
 /* ============================================================
