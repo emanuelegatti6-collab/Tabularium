@@ -557,3 +557,35 @@ alter table characters add column if not exists livello text;
 ```
 
 Una sola riga: aggiunge il livello alle schede. Tutto il resto è solo stile.
+
+---
+
+## Il Codex della campagna (cumulativo + modificabile)
+
+Una memoria persistente per campagna: le voci estratte si accumulano tra le
+sessioni e il DM può correggerle, unirle e cancellarle dalla pagina
+"Il Codex della campagna" (link dall'estrattore).
+
+### SQL da eseguire (SQL Editor di Supabase)
+
+```sql
+create table if not exists codex_entries (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  campaign_id uuid not null references campaigns(id) on delete cascade,
+  user_id uuid not null default auth.uid(),
+  tipo text not null,
+  nome text,
+  nota text,
+  segreto boolean default false
+);
+
+alter table codex_entries enable row level security;
+
+create policy "codex_proprio" on codex_entries
+  for all using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+create index if not exists codex_entries_campaign_idx
+  on codex_entries(campaign_id);
+```

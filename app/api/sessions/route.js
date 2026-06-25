@@ -67,8 +67,98 @@ export async function POST(request) {
       .select()
       .single();
     if (error) throw error;
+
+    // Confluisci il Codex della sessione in quello cumulativo della campagna.
+    if (codex) {
+      try {
+        await mergeCodex(supabase, campaignId, codex);
+      } catch (mergeErr) {
+        // Extra: se la fusione fallisce, la sessione resta comunque salvata.
+      }
+    }
+
     return Response.json(data);
   } catch (e) {
     return Response.json({ error: "Salvataggio fallito." }, { status: 500 });
+  }
+}
+
+// Fonde le voci estratte nel Codex persistente della campagna.
+async function mergeCodex(supabase, campaignId, codex) {
+  const { data: existing } = await supabase
+    .from("codex_entries")
+    .select("id, tipo, nome, nota, segreto")
+    .eq("campaign_id", campaignId);
+
+  const norm = (s) => (s || "").trim().toLowerCase();
+  const key = (tipo, k) => tipo + "::" + norm(k);
+  const idx = new Map();
+  (existing || []).forEach((e) => idx.set(key(e.tipo, e.nome ?? e.nota), e));
+
+  const toInsert = [];
+  const toUpdate = [];
+
+  const entita = (tipo, nome, nota, segreto) => {
+    if (!nome || !nome.trim()) return;
+    const k = key(tipo, nome);
+    const ex = idx.get(k);
+    if (ex) {
+      let nuovaNota = ex.nota || "";
+      const n = (nota || "").trim();
+      if (n && !norm(nuovaNota).includes(norm(n))) {
+        nuovaNota = nuovaNota ? nuovaNota + "\n" + n : n;
+      }
+      const nuovoSegreto = !!ex.segreto || !!segreto;
+      if (nuovaNota !== (ex.nota || "") || nuovoSegreto !== !!ex.segreto) {
+        toUpdate.push({ id: ex.id, nota: nuovaNota, segreto: nuovoSegreto });
+        ex.nota = nuovaNota;
+        ex.segreto = nuovoSegreto;
+      }
+    } else {
+      const row = {
+        campaign_id: campaignId,
+        tipo,
+        nome: nome.trim(),
+        nota: (nota || "").trim(),
+        segreto: !!segreto,
+      };
+      toInsert.push(row);
+      idx.set(k, row);
+    }
+  };
+
+  const enunciato = (tipo, testo) => {
+    if (!testo || !testo.trim()) return;
+    const k = key(tipo, testo);
+    if (idx.get(k)) return;
+    const row = {
+      campaign_id: campaignId,
+      tipo,
+      nome: null,
+      nota: testo.trim(),
+      segreto: false,
+    };
+    toInsert.push(row);
+    idx.set(k, row);
+  };
+
+  (codex.npc || []).forEach((i) => entita("npc", i.nome, i.nota, i.segreto));
+  (codex.luoghi || []).forEach((i) => entita("luogo", i.nome, i.nota));
+  (codex.fazioni || []).forEach((i) => entita("fazione", i.nome, i.nota));
+  (codex.promesse || []).forEach((i) => enunciato("promessa", i.testo));
+  (codex.fili_aperti || []).forEach((i) => enunciato("filo", i.testo));
+
+  if (toInsert.length) {
+    await supabase.from("codex_entries").insert(toInsert);
+  }
+  for (const u of toUpdate) {
+    await supabase
+      .from("codex_entries")
+      .update({
+        nota: u.nota,
+        segreto: u.segreto,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", u.id);
   }
 }

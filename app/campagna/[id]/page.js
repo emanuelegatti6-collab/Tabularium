@@ -267,6 +267,11 @@ export default function CampagnaWorkspace() {
       />
 
       <div className="codex-body">
+        <div className="codex-open-row">
+          <Link href={`/campagna/${campaignId}/codex`} className="codex-open-link">
+            📖 Sfoglia il Codex della campagna →
+          </Link>
+        </div>
         <div className="codex-grid">
           {/* ARCHIVIO SESSIONI */}
           <aside className="framed-panel sessions-panel">
