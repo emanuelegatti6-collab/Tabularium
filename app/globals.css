@@ -1253,13 +1253,33 @@ button.plaque {
   height: 460px;
 }
 
-.char-hero-img {
+.char-hero-media {
+  position: relative;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  display: block;
+  overflow: hidden;
   -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
   mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
+}
+
+/* Sfondo sfocato (riempie i lati con la foto stessa) */
+.char-hero-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(30px) brightness(0.45);
+  transform: scale(1.15);
+}
+
+/* La foto vera, mostrata INTERA senza tagli */
+.char-hero-img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .char-hero-empty {
@@ -1273,8 +1293,6 @@ button.plaque {
   color: var(--muted);
   background: radial-gradient(80% 80% at 50% 35%, rgba(212, 168, 67, 0.06), transparent 70%),
     var(--surface);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
   font-family: var(--display);
   letter-spacing: 0.08em;
 }

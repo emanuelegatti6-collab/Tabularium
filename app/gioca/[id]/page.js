@@ -219,14 +219,26 @@ export default function GiocaCampagna() {
       </div>
 
       <div className="char-hero">
-        {form.avatar_url ? (
-          <img src={form.avatar_url} alt={form.nome} className="char-hero-img" />
-        ) : (
-          <div className="char-hero-empty">
-            <IconCamera />
-            <span>La foto del tuo personaggio</span>
-          </div>
-        )}
+        <div className="char-hero-media">
+          {form.avatar_url ? (
+            <>
+              <div
+                className="char-hero-bg"
+                style={{ backgroundImage: `url(${form.avatar_url})` }}
+              />
+              <img
+                src={form.avatar_url}
+                alt={form.nome}
+                className="char-hero-img"
+              />
+            </>
+          ) : (
+            <div className="char-hero-empty">
+              <IconCamera />
+              <span>La foto del tuo personaggio</span>
+            </div>
+          )}
+        </div>
         <label className="char-photo-btn">
           <IconCamera />
           {uploadingPhoto
