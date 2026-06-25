@@ -92,6 +92,8 @@ export default function Home() {
         </button>
       </div>
 
+      <img src="/hero.png" alt="Tabolarium" className="hero" />
+
       <p className="eyebrow">Familiar</p>
       <h1>Le tue campagne</h1>
       <p className="sub">Apri una campagna per entrarci, o creane una nuova.</p>

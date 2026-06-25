@@ -29,6 +29,7 @@ export default function GiocaCampagna() {
   const [saving, setSaving] = useState(false);
   const [savedMsg, setSavedMsg] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -123,6 +124,22 @@ export default function GiocaCampagna() {
       setError("Salvataggio fallito. Riprova.");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function eliminaScheda() {
+    setError(null);
+    try {
+      const { error: err } = await supabase
+        .from("characters")
+        .delete()
+        .eq("campaign_id", campaignId);
+      if (err) throw err;
+      setForm(VUOTA);
+      setConfirmingDelete(false);
+      setSavedMsg(false);
+    } catch (e) {
+      setError("Eliminazione della scheda fallita.");
     }
   }
 
@@ -227,6 +244,31 @@ export default function GiocaCampagna() {
         </button>
         {savedMsg && <span className="saved-badge">✓ Scheda salvata</span>}
       </div>
+
+      {confirmingDelete ? (
+        <div className="confirm-delete" style={{ marginTop: "16px" }}>
+          <p>
+            Eliminare la tua scheda del personaggio? L'azione è irreversibile.
+          </p>
+          <div className="row">
+            <button className="danger-btn" onClick={eliminaScheda}>
+              Sì, elimina la scheda
+            </button>
+            <button className="ghost" onClick={() => setConfirmingDelete(false)}>
+              Annulla
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="row" style={{ marginTop: "10px" }}>
+          <button
+            className="ghost danger"
+            onClick={() => setConfirmingDelete(true)}
+          >
+            Elimina scheda
+          </button>
+        </div>
+      )}
     </main>
   );
 }

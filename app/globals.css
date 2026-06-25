@@ -777,3 +777,13 @@ input[type="password"]:focus {
 .char-card-bg {
   color: var(--muted) !important;
 }
+
+/* --- Immagine hero della home --- */
+.hero {
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  margin-bottom: 28px;
+  display: block;
+}
