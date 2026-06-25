@@ -36,6 +36,9 @@ export default function CampagnaWorkspace() {
   const [user, setUser] = useState(undefined);
   const [ready, setReady] = useState(false);
   const [campaignName, setCampaignName] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
+  const [members, setMembers] = useState([]);
+  const [copied, setCopied] = useState(false);
 
   const [transcript, setTranscript] = useState(ESEMPIO);
   const [loading, setLoading] = useState(false);
@@ -68,8 +71,10 @@ export default function CampagnaWorkspace() {
           return;
         }
         setCampaignName(camp.name);
+        setInviteCode(camp.invite_code);
         setReady(true);
         caricaSessioni();
+        caricaMembri();
       } catch (e) {
         router.push("/");
       }
@@ -81,6 +86,19 @@ export default function CampagnaWorkspace() {
       const res = await fetch(`/api/sessions?campaignId=${campaignId}`);
       if (res.ok) setSessions(await res.json());
     } catch (e) {}
+  }
+
+  async function caricaMembri() {
+    try {
+      const res = await fetch(`/api/members?campaignId=${campaignId}`);
+      if (res.ok) setMembers(await res.json());
+    } catch (e) {}
+  }
+
+  function copiaCodice() {
+    navigator.clipboard.writeText(inviteCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }
 
   async function logout() {
@@ -204,6 +222,32 @@ export default function CampagnaWorkspace() {
         Prima di giocare, genera il briefing. Dopo, estrai e salva la nuova
         sessione: la campagna cresce e il briefing si fa più ricco.
       </p>
+
+      <div className="invite-box">
+        <div className="invite-head">
+          <div>
+            <div className="invite-label">Codice d'invito</div>
+            <div className="invite-code">{inviteCode}</div>
+          </div>
+          <button className="ghost" onClick={copiaCodice}>
+            {copied ? "Copiato ✓" : "Copia"}
+          </button>
+        </div>
+        <p className="invite-hint">
+          Dallo ai tuoi giocatori: lo inseriranno in "Unisciti a una campagna"
+          per entrare.
+        </p>
+        {members.length > 0 && (
+          <div className="members">
+            <div className="invite-label">Giocatori ({members.length})</div>
+            <ul>
+              {members.map((m) => (
+                <li key={m.id}>{m.player_email}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
 
       {sessions.length > 0 && (
         <div className="brief-section">

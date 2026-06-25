@@ -569,3 +569,74 @@ input[type="password"]:focus {
   font-size: 13px;
   color: #fca5a5;
 }
+
+/* --- Invito e membri --- */
+.join-hint {
+  font-size: 14px;
+  color: var(--muted);
+  margin: -12px 0 28px;
+}
+
+.join-hint a {
+  color: var(--amber);
+  text-decoration: none;
+}
+
+.join-hint a:hover {
+  text-decoration: underline;
+}
+
+.invite-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 28px;
+}
+
+.invite-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.invite-label {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.invite-code {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 22px;
+  letter-spacing: 0.15em;
+  color: var(--amber);
+  font-weight: 600;
+}
+
+.invite-hint {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 12px 0 0;
+}
+
+.members {
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+  padding-top: 14px;
+}
+
+.members ul {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0;
+}
+
+.members li {
+  font-size: 14px;
+  color: var(--text);
+  padding: 3px 0;
+}

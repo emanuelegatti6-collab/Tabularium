@@ -349,3 +349,96 @@ ripulisci con `delete from sessions where campaign_id is null;`
 3. Ruoli: DM vs giocatore, con accessi diversi.
 4. Schede dei personaggi (i pg) compilate dai giocatori.
 5. Briefing senza spoiler per i giocatori.
+
+---
+
+## Multi-utente, pezzo 2: invito + account giocatori
+
+Da ora il DM ha un codice d'invito per ogni campagna, e i giocatori possono
+entrare inserendolo. In questo pezzo il giocatore diventa solo un "membro
+registrato": NON vede ancora nulla di sensibile (quello è il pezzo 3-4).
+
+### SQL da eseguire (SQL Editor di Supabase)
+
+```sql
+-- 1. Codice d'invito su ogni campagna (con riempimento di quelle esistenti)
+alter table campaigns add column if not exists invite_code text unique;
+update campaigns
+  set invite_code = upper(substr(md5(random()::text), 1, 8))
+  where invite_code is null;
+
+-- 2. Tabella dei membri: chi è entrato in quale campagna, con che ruolo
+create table if not exists members (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz default now(),
+  campaign_id uuid references campaigns(id) on delete cascade,
+  user_id uuid default auth.uid(),
+  player_email text,
+  role text not null default 'giocatore',
+  unique (campaign_id, user_id)
+);
+
+alter table members enable row level security;
+
+-- Lettura: il DM vede i membri delle SUE campagne; ogni membro vede la propria riga.
+-- (Nessuna policy di inserimento: si entra SOLO tramite la funzione sicura qui sotto.)
+create policy "membri_leggi"
+  on members for select to authenticated
+  using (
+    user_id = auth.uid()
+    or exists (
+      select 1 from campaigns c
+      where c.id = members.campaign_id and c.dm_id = auth.uid()
+    )
+  );
+
+-- 3. Funzione SICURA per unirsi tramite codice.
+--    Gira con privilegi elevati (security definer) ma fa SOLO una cosa:
+--    trova la campagna dal codice e iscrive chi chiama come giocatore.
+create or replace function join_campaign(p_code text)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_campaign_id uuid;
+  v_email text;
+begin
+  select id into v_campaign_id from campaigns where invite_code = upper(p_code);
+  if v_campaign_id is null then
+    return null;
+  end if;
+  select email into v_email from auth.users where id = auth.uid();
+  insert into members (campaign_id, user_id, player_email, role)
+  values (v_campaign_id, auth.uid(), v_email, 'giocatore')
+  on conflict (campaign_id, user_id) do nothing;
+  return v_campaign_id;
+end;
+$$;
+```
+
+### La logica di sicurezza, spiegata
+
+Il punto delicato: un giocatore che si unisce NON è il DM, quindi le regole
+non gli permettono di leggere la campagna direttamente. Allora come fa a
+entrare dal codice? Tramite la funzione `join_campaign`: gira con privilegi
+elevati, ma è "ingabbiata" — può fare solo quella precisa operazione sicura
+(trova la campagna dal codice, iscrive chi chiama). Non può essere usata per
+leggere o entrare in campagne di cui non si conosce il codice. È il modo
+pulito di Supabase per fare un'operazione privilegiata senza dare poteri
+all'app.
+
+### Come collaudarlo
+
+1. Da DM: apri una campagna, copia il codice d'invito (in alto).
+2. Esci, e **registra una seconda email finta** (es. test+player@...).
+3. Con quel secondo account, vai su "Unisciti a una campagna" e incolla il codice.
+   Dovresti vedere il messaggio di successo.
+4. Riaccedi col tuo account DM, riapri la campagna: il secondo account compare
+   nell'elenco "Giocatori". Se lo vedi lì, l'invito funziona.
+
+### Prossimi mattoni
+
+3. Schede dei personaggi (i pg) create dai giocatori.
+4. Briefing senza spoiler visibile ai giocatori.

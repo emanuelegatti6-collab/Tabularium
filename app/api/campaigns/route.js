@@ -1,10 +1,20 @@
 // =============================================================
-//  CAMPAGNE (la fondazione del multi-utente)
-//  Ogni campagna ha un DM proprietario (dm_id = auth.uid()).
-//  Le regole RLS fanno vedere a ogni DM solo le proprie campagne.
+//  CAMPAGNE
+//  Ogni campagna ha un DM proprietario e un CODICE D'INVITO
+//  con cui i giocatori possono entrare.
 // =============================================================
 
 import { createClient } from "../../../utils/supabase/server";
+
+// Codice breve e leggibile (niente caratteri ambigui come O/0, I/1).
+function generaCodice() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s = "";
+  for (let i = 0; i < 8; i++) {
+    s += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return s;
+}
 
 export async function GET() {
   const supabase = await createClient();
@@ -18,7 +28,7 @@ export async function GET() {
   try {
     const { data, error } = await supabase
       .from("campaigns")
-      .select("id, name, created_at")
+      .select("id, name, created_at, invite_code")
       .order("created_at", { ascending: true });
     if (error) throw error;
     return Response.json(data);
@@ -41,10 +51,9 @@ export async function POST(request) {
     if (!name || !name.trim()) {
       return Response.json({ error: "Nome mancante" }, { status: 400 });
     }
-    // dm_id viene impostato dal default della colonna (auth.uid()).
     const { data, error } = await supabase
       .from("campaigns")
-      .insert({ name: name.trim() })
+      .insert({ name: name.trim(), invite_code: generaCodice() })
       .select()
       .single();
     if (error) throw error;
@@ -73,8 +82,6 @@ export async function DELETE(request) {
   }
 
   try {
-    // RLS permette di cancellare solo le proprie campagne.
-    // Le sessioni collegate spariscono in automatico (ON DELETE CASCADE).
     const { error } = await supabase.from("campaigns").delete().eq("id", id);
     if (error) throw error;
     return Response.json({ ok: true });

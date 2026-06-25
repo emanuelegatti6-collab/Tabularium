@@ -99,6 +99,11 @@ export default function Home() {
         <button onClick={creaCampagna}>Crea</button>
       </div>
 
+      <p className="join-hint">
+        Sei un giocatore?{" "}
+        <Link href="/unisciti">Unisciti a una campagna con un codice</Link>
+      </p>
+
       {campaigns.length === 0 ? (
         <p className="sub" style={{ marginTop: "24px" }}>
           Non hai ancora campagne. Creane una qui sopra per cominciare.
