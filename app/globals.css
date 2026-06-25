@@ -988,3 +988,184 @@ input[type="password"]:focus {
 .landing-btn.primary:hover {
   background: linear-gradient(180deg, #f4d888, var(--amber-bright));
 }
+
+/* ============================================================
+   PAGINA "LE TUE CAMPAGNE" — tema del mockup
+   ============================================================ */
+.campagne-page {
+  padding: 0 0 60px;
+}
+
+.campagne-topbar {
+  max-width: 920px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  padding: 14px 24px 10px;
+}
+
+.campagne-hero {
+  display: block;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  height: auto;
+}
+
+.campagne-body {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 8px 28px 0;
+}
+
+/* Occhiello con fregio dorato */
+.eyebrow.flourish {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.eyebrow.flourish::after {
+  content: "";
+  height: 1px;
+  width: 60px;
+  background: linear-gradient(90deg, var(--border-strong), transparent);
+}
+
+/* Pulsante "Crea" a placca dorata */
+button.plaque {
+  padding: 14px 34px;
+  font-size: 15px;
+  border: 1px solid #8a6a28;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px rgba(36, 23, 4, 0.35),
+    inset 0 1px 0 rgba(255, 245, 220, 0.5), 0 3px 8px rgba(0, 0, 0, 0.45);
+}
+
+.campaign-create {
+  gap: 14px;
+}
+
+/* Carte con cornice ad angoli ornati */
+.campaign-card.framed {
+  position: relative;
+  padding: 18px 22px;
+  gap: 18px;
+  align-items: center;
+}
+
+.campaign-thumb {
+  width: 90px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border-strong);
+  flex-shrink: 0;
+}
+
+.corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.corner.tl {
+  top: 6px;
+  left: 6px;
+  border-top: 2px solid var(--amber);
+  border-left: 2px solid var(--amber);
+}
+.corner.tr {
+  top: 6px;
+  right: 6px;
+  border-top: 2px solid var(--amber);
+  border-right: 2px solid var(--amber);
+}
+.corner.bl {
+  bottom: 6px;
+  left: 6px;
+  border-bottom: 2px solid var(--amber);
+  border-left: 2px solid var(--amber);
+}
+.corner.br {
+  bottom: 6px;
+  right: 6px;
+  border-bottom: 2px solid var(--amber);
+  border-right: 2px solid var(--amber);
+}
+
+.campaign-card-main {
+  flex: 1;
+}
+
+.campaign-open {
+  font-size: 22px;
+}
+
+/* Fascia delle tre caratteristiche */
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin: 48px 0 8px;
+  text-align: center;
+}
+
+.feat {
+  color: var(--amber);
+}
+
+.feat-ico {
+  width: 38px;
+  height: 38px;
+  color: var(--amber);
+  margin-bottom: 12px;
+}
+
+.feat h4 {
+  font-family: var(--display);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin: 0 0 8px;
+}
+
+.feat p {
+  font-family: var(--body);
+  font-size: 15px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Divisore a d20 */
+.d20-divider {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 44px auto 0;
+  color: var(--amber);
+}
+
+.d20-divider svg {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+}
+
+.d20-line {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+}
+
+@media (max-width: 640px) {
+  .features {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
