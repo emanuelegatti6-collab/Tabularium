@@ -41,6 +41,8 @@ export default function CampagnaWorkspace() {
   const [characters, setCharacters] = useState([]);
   const [copied, setCopied] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
+  const [showSessions, setShowSessions] = useState(false);
+  const [showCharacters, setShowCharacters] = useState(false);
 
   const [transcript, setTranscript] = useState(ESEMPIO);
   const [loading, setLoading] = useState(false);
@@ -340,58 +342,83 @@ export default function CampagnaWorkspace() {
       )}
 
       {sessions.length > 0 && (
-        <div className="saved">
-          <h3>Sessioni salvate</h3>
-          <ul>
-            {sessions.map((s) => (
-              <li key={s.id}>
-                <button className="saved-item" onClick={() => apriSessione(s)}>
-                  <span className="saved-title">{s.title}</span>
-                  <span className="saved-date">
-                    {new Date(s.created_at).toLocaleDateString("it-IT")}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
+        <div className="collapsible">
+          <button
+            className="collapse-toggle"
+            onClick={() => setShowSessions((v) => !v)}
+          >
+            <span>Sessioni salvate ({sessions.length})</span>
+            <span className="chev">{showSessions ? "▲" : "▼"}</span>
+          </button>
+          {showSessions && (
+            <div className="saved">
+              <ul>
+                {sessions.map((s) => (
+                  <li key={s.id}>
+                    <button
+                      className="saved-item"
+                      onClick={() => apriSessione(s)}
+                    >
+                      <span className="saved-title">{s.title}</span>
+                      <span className="saved-date">
+                        {new Date(s.created_at).toLocaleDateString("it-IT")}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
 
       {characters.length > 0 && (
-        <div className="char-sheets">
-          <h3>Schede dei personaggi</h3>
-          <div className="char-grid">
-            {characters.map((c) => (
-              <div key={c.id} className="char-card">
-                {c.avatar_url ? (
-                  <img
-                    src={c.avatar_url}
-                    alt={c.nome}
-                    className="char-card-avatar"
-                  />
-                ) : (
-                  <div className="char-card-avatar placeholder">?</div>
-                )}
-                <div className="char-card-body">
-                  <div className="char-card-name">{c.nome || "Senza nome"}</div>
-                  <div className="char-card-sub">
-                    {[c.razza, c.classe].filter(Boolean).join(" · ")}
+        <div className="collapsible">
+          <button
+            className="collapse-toggle"
+            onClick={() => setShowCharacters((v) => !v)}
+          >
+            <span>Schede dei personaggi ({characters.length})</span>
+            <span className="chev">{showCharacters ? "▲" : "▼"}</span>
+          </button>
+          {showCharacters && (
+            <div className="char-sheets">
+              <div className="char-grid">
+                {characters.map((c) => (
+                  <div key={c.id} className="char-card">
+                    {c.avatar_url ? (
+                      <img
+                        src={c.avatar_url}
+                        alt={c.nome}
+                        className="char-card-avatar"
+                      />
+                    ) : (
+                      <div className="char-card-avatar placeholder">?</div>
+                    )}
+                    <div className="char-card-body">
+                      <div className="char-card-name">
+                        {c.nome || "Senza nome"}
+                      </div>
+                      <div className="char-card-sub">
+                        {[c.razza, c.classe].filter(Boolean).join(" · ")}
+                      </div>
+                      {c.descrizione && <p>{c.descrizione}</p>}
+                      {c.background && (
+                        <p className="char-card-bg">
+                          <strong>Storia:</strong> {c.background}
+                        </p>
+                      )}
+                      {c.note && (
+                        <p className="char-card-bg">
+                          <strong>Note:</strong> {c.note}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  {c.descrizione && <p>{c.descrizione}</p>}
-                  {c.background && (
-                    <p className="char-card-bg">
-                      <strong>Storia:</strong> {c.background}
-                    </p>
-                  )}
-                  {c.note && (
-                    <p className="char-card-bg">
-                      <strong>Note:</strong> {c.note}
-                    </p>
-                  )}
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          )}
         </div>
       )}
 
