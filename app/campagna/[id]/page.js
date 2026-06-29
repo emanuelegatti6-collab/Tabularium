@@ -309,55 +309,50 @@ export default function CampagnaWorkspace() {
                 Nessuna sessione ancora. Estrai e salva la prima.
               </p>
             ) : (
-              <div className="session-list">
-                {sessions.map((s) => (
-                  <div
-                    key={s.id}
-                    className={
-                      "session-item" +
-                      (selectedSessionId === s.id ? " active" : "")
-                    }
-                  >
-                    {confirmingSessionId === s.id ? (
-                      <div className="session-confirm">
-                        <span>Eliminare questa sessione?</span>
-                        <div>
-                          <button
-                            className="danger-btn"
-                            onClick={() => eliminaSessione(s.id)}
-                          >
-                            Sì, elimina
-                          </button>
-                          <button
-                            className="ghost"
-                            onClick={() => setConfirmingSessionId(null)}
-                          >
-                            Annulla
-                          </button>
-                        </div>
+              <div className="session-picker">
+                <select
+                  className="field-select session-select"
+                  value={selectedSessionId || ""}
+                  onChange={(e) => {
+                    const s = sessions.find((x) => x.id === e.target.value);
+                    if (s) apriSessione(s);
+                  }}
+                >
+                  <option value="">Scegli una sessione da rivedere…</option>
+                  {sessions.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.title}
+                    </option>
+                  ))}
+                </select>
+
+                {selectedSessionId &&
+                  (confirmingSessionId === selectedSessionId ? (
+                    <div className="session-confirm">
+                      <span>Eliminare la sessione aperta?</span>
+                      <div>
+                        <button
+                          className="danger-btn"
+                          onClick={() => eliminaSessione(selectedSessionId)}
+                        >
+                          Sì, elimina
+                        </button>
+                        <button
+                          className="ghost"
+                          onClick={() => setConfirmingSessionId(null)}
+                        >
+                          Annulla
+                        </button>
                       </div>
-                    ) : (
-                      <>
-                        <button
-                          className="session-open"
-                          onClick={() => apriSessione(s)}
-                        >
-                          <span className="session-title">{s.title}</span>
-                          <span className="session-date">
-                            {new Date(s.created_at).toLocaleDateString("it-IT")}
-                          </span>
-                        </button>
-                        <button
-                          className="session-del"
-                          title="Elimina sessione"
-                          onClick={() => setConfirmingSessionId(s.id)}
-                        >
-                          ✕
-                        </button>
-                      </>
-                    )}
-                  </div>
-                ))}
+                    </div>
+                  ) : (
+                    <button
+                      className="ghost danger-sm session-del-open"
+                      onClick={() => setConfirmingSessionId(selectedSessionId)}
+                    >
+                      ✕ Elimina la sessione aperta
+                    </button>
+                  ))}
               </div>
             )}
           </aside>

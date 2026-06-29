@@ -2186,3 +2186,15 @@ button.plaque {
   padding: 50px 20px;
   line-height: 1.6;
 }
+
+/* --- Menù a tendina delle sessioni --- */
+.session-picker {
+  margin-top: 14px;
+}
+.session-select {
+  width: 100%;
+}
+.session-del-open {
+  margin-top: 12px;
+  font-size: 13px;
+}
