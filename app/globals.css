@@ -2259,3 +2259,72 @@ button.plaque {
   color: var(--muted);
   font-style: italic;
 }
+
+/* --- Codex estratto: modifica al volo --- */
+.results.editable .results-hint {
+  color: var(--muted);
+  font-size: 14px;
+  font-style: italic;
+  margin-bottom: 18px;
+  line-height: 1.6;
+}
+.codex-edit-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+.codex-edit-row.secret {
+  border-color: var(--border-strong);
+  background: rgba(212, 168, 67, 0.04);
+}
+.codex-edit-top {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.codex-edit-top input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--display);
+  font-size: 16px;
+  color: var(--amber-bright);
+}
+.codex-edit-row textarea {
+  width: 100%;
+  min-height: 50px;
+  font-family: var(--body);
+  font-size: 15px;
+}
+.codex-edit-statement {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.codex-edit-statement textarea {
+  flex: 1;
+}
+.codex-del-x {
+  font-size: 14px;
+  padding: 4px 9px;
+  flex-shrink: 0;
+}
+.codex-add-sm {
+  background: transparent;
+  border: 1px dashed var(--border-strong);
+  color: var(--amber);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-family: var(--display);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: none;
+  margin-bottom: 10px;
+}
+.codex-add-sm:hover {
+  border-color: var(--amber);
+  color: var(--amber-bright);
+}

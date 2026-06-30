@@ -371,6 +371,33 @@ export default function CampagnaWorkspace() {
     }
   }
 
+  function aggiornaVoceCodex(chiave, index, campo, valore) {
+    setCodex((c) => {
+      const items = [...(c[chiave] || [])];
+      items[index] = { ...items[index], [campo]: valore };
+      return { ...c, [chiave]: items };
+    });
+    setSaved(false);
+  }
+
+  function eliminaVoceCodex(chiave, index) {
+    setCodex((c) => {
+      const items = [...(c[chiave] || [])];
+      items.splice(index, 1);
+      return { ...c, [chiave]: items };
+    });
+    setSaved(false);
+  }
+
+  function aggiungiVoceCodex(chiave, entita) {
+    setCodex((c) => {
+      const items = [...(c[chiave] || [])];
+      items.push(entita ? { nome: "", nota: "", segreto: false } : { testo: "" });
+      return { ...c, [chiave]: items };
+    });
+    setSaved(false);
+  }
+
   if (user === undefined || !ready) return null;
 
   return (
@@ -688,36 +715,97 @@ export default function CampagnaWorkspace() {
         )}
 
         {codex && (
-          <div className="results">
+          <div className="results editable">
+            <div className="results-hint">
+              Rivedi e correggi quello che l'AI ha estratto. Quando salvi la
+              sessione, la versione corretta entra nel Codex della campagna.
+            </div>
             {CATEGORIE.map(({ chiave, titolo }) => {
               const items = codex[chiave] || [];
-              if (items.length === 0) return null;
+              const entita =
+                chiave === "npc" || chiave === "luoghi" || chiave === "fazioni";
               return (
                 <section key={chiave}>
                   <div className="cat-head">
                     <h2>{titolo}</h2>
                     <span>{items.length}</span>
                   </div>
-                  <ul>
-                    {items.map((item, i) => {
-                      const segreto = chiave === "npc" && item.segreto;
-                      return (
-                        <li key={i} className={segreto ? "secret" : ""}>
-                          {item.testo ? (
-                            <span>{item.testo}</span>
-                          ) : (
-                            <>
-                              <div className="nome-row">
-                                <strong>{item.nome}</strong>
-                                {segreto && <span className="badge">Solo DM</span>}
-                              </div>
-                              {item.nota && <p>{item.nota}</p>}
-                            </>
-                          )}
-                        </li>
-                      );
-                    })}
-                  </ul>
+                  {items.map((item, i) => (
+                    <div
+                      key={i}
+                      className={
+                        "codex-edit-row" + (item.segreto ? " secret" : "")
+                      }
+                    >
+                      {entita ? (
+                        <>
+                          <div className="codex-edit-top">
+                            <input
+                              value={item.nome || ""}
+                              onChange={(e) =>
+                                aggiornaVoceCodex(chiave, i, "nome", e.target.value)
+                              }
+                              placeholder="Nome"
+                            />
+                            {chiave === "npc" && (
+                              <label className="codex-seg">
+                                <input
+                                  type="checkbox"
+                                  checked={!!item.segreto}
+                                  onChange={(e) =>
+                                    aggiornaVoceCodex(
+                                      chiave,
+                                      i,
+                                      "segreto",
+                                      e.target.checked
+                                    )
+                                  }
+                                />
+                                Solo DM
+                              </label>
+                            )}
+                            <button
+                              className="ghost danger-sm codex-del-x"
+                              title="Elimina voce"
+                              onClick={() => eliminaVoceCodex(chiave, i)}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                          <textarea
+                            value={item.nota || ""}
+                            onChange={(e) =>
+                              aggiornaVoceCodex(chiave, i, "nota", e.target.value)
+                            }
+                            placeholder="Cosa sappiamo su questa voce…"
+                          />
+                        </>
+                      ) : (
+                        <div className="codex-edit-statement">
+                          <textarea
+                            value={item.testo || ""}
+                            onChange={(e) =>
+                              aggiornaVoceCodex(chiave, i, "testo", e.target.value)
+                            }
+                            placeholder="Il testo…"
+                          />
+                          <button
+                            className="ghost danger-sm codex-del-x"
+                            title="Elimina voce"
+                            onClick={() => eliminaVoceCodex(chiave, i)}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    className="codex-add-sm"
+                    onClick={() => aggiungiVoceCodex(chiave, entita)}
+                  >
+                    + Aggiungi
+                  </button>
                 </section>
               );
             })}
