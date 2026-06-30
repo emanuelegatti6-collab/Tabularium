@@ -1,52 +1,38 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "../../../utils/supabase/client";
+import { createClient } from "../utils/supabase/client";
 
-const ESEMPIO = `DM: Arrivate al Mercato dei Sussurri. È sera, le bancarelle stanno chiudendo.
-Marco: aspetta, quanti PF mi erano rimasti?
-DM: 14. Una donna incappucciata vi fa cenno da un vicolo. "Mi chiamo Kethra."
-Giulia: passami le patatine
-Marco: le chiedo chi è
-DM: Kethra sorride. "A Saltmere certe cose si comprano, certe si rubano. La Gilda dei Ladri può trovare Joss... ma ci sarà un prezzo."
-Giulia: Joss è il fratello di Mira, giusto?
-DM: esatto, Mira vi aveva chiesto di ritrovarlo.
-Marco: ok, le dico che accettiamo. Promettiamo di riportare Joss a Mira sano e salvo.
-DM: Kethra annuisce. "Bene. Ma Lord Varric non sarà contento." Poi sparisce nel buio.
-Luca: chi è Lord Varric?
-DM: (fuori gioco: i personaggi non lo sanno) è un nobile di Casa Varric. In realtà controlla lui la Gilda, ma i giocatori non lo sanno ancora.
-DM: bene, ottima pausa, ci fermiamo qui per stasera.`;
-
-const CATEGORIE = [
-  { chiave: "npc", titolo: "Personaggi non giocanti" },
-  { chiave: "luoghi", titolo: "Luoghi" },
-  { chiave: "fazioni", titolo: "Fazioni" },
-  { chiave: "promesse", titolo: "Promesse del gruppo" },
-  { chiave: "fili_aperti", titolo: "Fili aperti" },
-];
-
-function Svg({ children, cls }) {
+function IconBook() {
   return (
-    <svg className={cls || "panel-ico"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      {children}
+    <svg className="feat-ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round">
+      <path d="M24 13C19 9 9 9 5 11v26c4-2 14-2 19 2 5-4 15-4 19-2V11c-4-2-14-2-19 2Z" />
+      <path d="M24 13v26" />
     </svg>
   );
 }
-const IconScroll = () => <Svg><><path d="M6 4h11v13a3 3 0 0 1-3 3H6" /><path d="M6 4a2 2 0 0 0-2 2v1h3" /><path d="M17 20a3 3 0 0 0 3-3v-1h-3" /><path d="M9 9h5M9 13h5" /></></Svg>;
-const IconParty = () => <Svg><><circle cx="8" cy="9" r="2.4" /><circle cx="16" cy="9" r="2.4" /><path d="M3 19c0-2.5 2.2-4.5 5-4.5s5 2 5 4.5" /><path d="M13 19c0-2.5 2.2-4.5 5-4.5 1 0 2 .3 2.8.8" /></></Svg>;
-const IconMic = () => <Svg><><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0" /><path d="M12 18v3" /></></Svg>;
-const IconBriefing = () => <Svg cls="action-ico"><><path d="M12 6C9 4 5 4 3 5v14c2-1 6-1 9 1 3-2 7-2 9-1V5c-2-1-6-1-9 1Z" /><path d="M12 6v14" /></></Svg>;
-const IconD20 = () => <Svg cls="action-ico"><><polygon points="12,2 20,7 20,17 12,22 4,17 4,7" /><polygon points="12,7 17,15.5 7,15.5" /></></Svg>;
-const IconSave = () => <Svg cls="action-ico"><><path d="M5 4h11l3 3v13H5z" /><path d="M8 4v5h7" /><rect x="8" y="13" width="8" height="6" /></></Svg>;
 
-function formatTime(s) {
-  const m = Math.floor(s / 60)
-    .toString()
-    .padStart(2, "0");
-  const sec = (s % 60).toString().padStart(2, "0");
-  return m + ":" + sec;
+function IconD20() {
+  return (
+    <svg className="feat-ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round">
+      <polygon points="24,4 41,14 41,34 24,44 7,34 7,14" />
+      <polygon points="24,13 34,31 14,31" />
+      <path d="M24 4v9M41 14l-7 17M7 14l7 17M14 31l10 13M34 31 24 44" />
+    </svg>
+  );
+}
+
+function IconDragon() {
+  return (
+    <svg className="feat-ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round">
+      <path d="M6 39c2-10 9-13 15-12-4-3-4-9 0-12 1 3 4 5 7 4-2 4 0 7 4 7 6 0 10 4 11 9" />
+      <path d="M28 19c3-5 9-6 14-4-3 1-5 3-5 6" />
+      <path d="M21 27c-4 2-6 6-6 11" />
+      <circle cx="24" cy="19" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  );
 }
 
 function D20Divider() {
@@ -63,695 +49,98 @@ function D20Divider() {
   );
 }
 
-export default function CampagnaWorkspace() {
+function IconLogin() {
+  return (
+    <svg className="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+      <path d="M10 17l5-5-5-5" />
+      <path d="M15 12H3" />
+    </svg>
+  );
+}
+
+function IconPersonPlus() {
+  return (
+    <svg className="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="8" r="3.5" />
+      <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" />
+      <path d="M19 8v6M22 11h-6" />
+    </svg>
+  );
+}
+
+export default function Landing() {
   const router = useRouter();
-  const params = useParams();
-  const campaignId = params.id;
   const supabase = createClient();
-
-  const [user, setUser] = useState(undefined);
-  const [ready, setReady] = useState(false);
-  const [campaignName, setCampaignName] = useState("");
-  const [inviteCode, setInviteCode] = useState("");
-  const [members, setMembers] = useState([]);
-  const [characters, setCharacters] = useState([]);
-  const [copied, setCopied] = useState(false);
-  const [showInvite, setShowInvite] = useState(false);
-  const [selectedChar, setSelectedChar] = useState(null);
-
-  const [transcript, setTranscript] = useState(ESEMPIO);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [codex, setCodex] = useState(null);
-  const [saved, setSaved] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [sessions, setSessions] = useState([]);
-  const [selectedSessionId, setSelectedSessionId] = useState(null);
-  const [confirmingSessionId, setConfirmingSessionId] = useState(null);
-
-  const [briefing, setBriefing] = useState(null);
-  const [briefingLoading, setBriefingLoading] = useState(false);
-  const [briefingError, setBriefingError] = useState(null);
-
-  const [transcribing, setTranscribing] = useState(false);
-  const [recording, setRecording] = useState(false);
-  const [recSeconds, setRecSeconds] = useState(0);
-  const mediaRef = useRef(null);
-  const chunksRef = useRef([]);
-  const streamRef = useRef(null);
-  const timerRef = useRef(null);
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
-      if (!data.user) {
-        router.push("/login");
-        return;
-      }
-      setUser(data.user);
-      try {
-        const res = await fetch("/api/campaigns");
-        const camps = res.ok ? await res.json() : [];
-        const camp = camps.find((c) => c.id === campaignId);
-        if (!camp) {
-          router.push("/campagne");
-          return;
-        }
-        setCampaignName(camp.name);
-        setInviteCode(camp.invite_code);
-        setReady(true);
-        caricaSessioni();
-        caricaMembri();
-        caricaSchede();
-      } catch (e) {
-        router.push("/campagne");
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        router.replace("/campagne");
+      } else {
+        setChecking(false);
       }
     });
   }, []);
 
-  async function caricaSessioni() {
-    try {
-      const res = await fetch(`/api/sessions?campaignId=${campaignId}`);
-      if (res.ok) setSessions(await res.json());
-    } catch (e) {}
-  }
-
-  async function caricaMembri() {
-    try {
-      const res = await fetch(`/api/members?campaignId=${campaignId}`);
-      if (res.ok) setMembers(await res.json());
-    } catch (e) {}
-  }
-
-  async function caricaSchede() {
-    try {
-      const res = await fetch(`/api/characters?campaignId=${campaignId}`);
-      if (res.ok) setCharacters(await res.json());
-    } catch (e) {}
-  }
-
-  function copiaCodice() {
-    navigator.clipboard.writeText(inviteCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
-
-  async function logout() {
-    await supabase.auth.signOut();
-    router.push("/");
-  }
-
-  async function trascriviSorgente(blob, nomeFile) {
-    setTranscribing(true);
-    setError(null);
-    try {
-      const safeName = nomeFile.replace(/[^a-zA-Z0-9.\-_]/g, "_");
-      const path = `${user.id}/${Date.now()}-${safeName}`;
-      const { error: upErr } = await supabase.storage
-        .from("audio")
-        .upload(path, blob);
-      if (upErr) throw upErr;
-
-      const res = await fetch("/api/transcribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ path }),
-      });
-      if (!res.ok) throw new Error("errore");
-      const data = await res.json();
-      setTranscript(data.text || "");
-    } catch (err) {
-      setError(
-        "Trascrizione fallita. Se la sessione è molto lunga potrebbe superare i 50 MB: riprova o accorciala."
-      );
-    } finally {
-      setTranscribing(false);
-    }
-  }
-
-  async function trascriviAudio(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    await trascriviSorgente(file, file.name);
-    e.target.value = "";
-  }
-
-  async function avviaRegistrazione() {
-    setError(null);
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      streamRef.current = stream;
-      const tipi = [
-        "audio/webm;codecs=opus",
-        "audio/webm",
-        "audio/mp4",
-        "audio/ogg",
-      ];
-      const mime =
-        typeof MediaRecorder !== "undefined"
-          ? tipi.find((t) => MediaRecorder.isTypeSupported(t)) || ""
-          : "";
-      const opts = { audioBitsPerSecond: 24000 };
-      if (mime) opts.mimeType = mime;
-
-      const mr = new MediaRecorder(stream, opts);
-      chunksRef.current = [];
-      mr.ondataavailable = (ev) => {
-        if (ev.data && ev.data.size) chunksRef.current.push(ev.data);
-      };
-      mr.onstop = async () => {
-        if (streamRef.current) {
-          streamRef.current.getTracks().forEach((t) => t.stop());
-        }
-        const blob = new Blob(chunksRef.current, {
-          type: mime || "audio/webm",
-        });
-        const est = mime && mime.includes("mp4") ? "m4a" : "webm";
-        await trascriviSorgente(blob, `registrazione.${est}`);
-      };
-      mediaRef.current = mr;
-      mr.start();
-      setRecording(true);
-      setRecSeconds(0);
-      timerRef.current = setInterval(
-        () => setRecSeconds((s) => s + 1),
-        1000
-      );
-    } catch (err) {
-      setError(
-        "Non riesco ad accedere al microfono. Controlla i permessi del browser."
-      );
-    }
-  }
-
-  function fermaRegistrazione() {
-    if (timerRef.current) clearInterval(timerRef.current);
-    setRecording(false);
-    if (mediaRef.current && mediaRef.current.state !== "inactive") {
-      mediaRef.current.stop();
-    }
-  }
-
-  async function estrai() {
-    if (!transcript.trim()) return;
-    setLoading(true);
-    setError(null);
-    setCodex(null);
-    setSaved(false);
-    setSelectedSessionId(null);
-    try {
-      const res = await fetch("/api/extract", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transcript, campaignId }),
-      });
-      if (!res.ok) throw new Error("errore");
-      setCodex(await res.json());
-    } catch (e) {
-      setError("Estrazione fallita. Controlla la chiave API e riprova.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function salva() {
-    if (!codex) return;
-    setSaving(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/sessions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transcript, codex, campaignId }),
-      });
-      if (!res.ok) throw new Error("errore");
-      const nuova = await res.json();
-      setSessions((s) => [nuova, ...s]);
-      setSaved(true);
-      setBriefing(null);
-    } catch (e) {
-      setError("Salvataggio fallito. Controlla le chiavi di Supabase.");
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function generaBriefing() {
-    setBriefingLoading(true);
-    setBriefingError(null);
-    try {
-      const res = await fetch(`/api/briefing?campaignId=${campaignId}`);
-      if (!res.ok) throw new Error("errore");
-      const data = await res.json();
-      if (data.error) throw new Error("errore");
-      setBriefing(data);
-    } catch (e) {
-      setBriefingError("Non sono riuscito a preparare il briefing. Riprova.");
-    } finally {
-      setBriefingLoading(false);
-    }
-  }
-
-  function apriSessione(s) {
-    setCodex(s.codex);
-    setSaved(true);
-    setSelectedSessionId(s.id);
-    setError(null);
-  }
-
-  async function eliminaSessione(id) {
-    setError(null);
-    try {
-      const res = await fetch(`/api/sessions?id=${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error();
-      setSessions((s) => s.filter((x) => x.id !== id));
-      setConfirmingSessionId(null);
-      if (selectedSessionId === id) {
-        setSelectedSessionId(null);
-        setCodex(null);
-        setSaved(false);
-      }
-    } catch (e) {
-      setError("Eliminazione della sessione fallita.");
-    }
-  }
-
-  if (user === undefined || !ready) return null;
+  if (checking) return null;
 
   return (
-    <main className="codex-page">
-      <div className="sheet-topbar">
-        <Link href="/campagne" className="back-link">
-          ← Le tue campagne
-        </Link>
-        <span className="sheet-topbar-title">Tabolarium · {campaignName}</span>
-        <div className="topbar-right">
-          <span className="user-email">{user.email}</span>
-          <button className="ghost" onClick={logout}>
-            Esci
-          </button>
-        </div>
-      </div>
+    <main className="landing">
+      <img src="/hero-landing.png" alt="Tabolarium" className="landing-hero" />
 
-      <img
-        src="/hero-codex.png"
-        alt="L'estrattore di Codex"
-        className="codex-hero"
-      />
+      <div className="landing-body">
+        <p className="landing-intro">
+          Tabolarium è il grimorio digitale del Dungeon Master. Trascrivi le
+          sessioni, conserva ogni dettaglio, e preparati a vivere avventure
+          indimenticabili.
+        </p>
 
-      <div className="codex-body">
-        <div className="codex-open-row">
-          <Link href={`/campagna/${campaignId}/codex`} className="codex-open-link">
-            📖 Sfoglia il Codex della campagna →
+        <div className="landing-actions">
+          <Link href="/login" className="cut-btn primary">
+            <IconLogin />
+            Accedi
+          </Link>
+          <Link href="/register" className="cut-btn outline">
+            <span className="cut-inner">
+              <IconPersonPlus />
+              Registrati
+            </span>
           </Link>
         </div>
-        <div className="codex-grid">
-          {/* ARCHIVIO SESSIONI */}
-          <aside className="framed-panel sessions-panel">
-            <span className="corner tl" />
-            <span className="corner tr" />
-            <span className="corner bl" />
-            <span className="corner br" />
-            <div className="panel-title">
-              <IconScroll /> Archivio delle sessioni
-            </div>
-            <div className="panel-sub">
-              {sessions.length}{" "}
-              {sessions.length === 1 ? "sessione salvata" : "sessioni salvate"}
-            </div>
-            {sessions.length === 0 ? (
-              <p className="panel-empty">
-                Nessuna sessione ancora. Estrai e salva la prima.
-              </p>
-            ) : (
-              <div className="session-picker">
-                <select
-                  className="field-select session-select"
-                  value={selectedSessionId || ""}
-                  onChange={(e) => {
-                    const s = sessions.find((x) => x.id === e.target.value);
-                    if (s) apriSessione(s);
-                  }}
-                >
-                  <option value="">Scegli una sessione da rivedere…</option>
-                  {sessions.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.title}
-                    </option>
-                  ))}
-                </select>
 
-                {selectedSessionId &&
-                  (confirmingSessionId === selectedSessionId ? (
-                    <div className="session-confirm">
-                      <span>Eliminare la sessione aperta?</span>
-                      <div>
-                        <button
-                          className="danger-btn"
-                          onClick={() => eliminaSessione(selectedSessionId)}
-                        >
-                          Sì, elimina
-                        </button>
-                        <button
-                          className="ghost"
-                          onClick={() => setConfirmingSessionId(null)}
-                        >
-                          Annulla
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <button
-                      className="ghost danger-sm session-del-open"
-                      onClick={() => setConfirmingSessionId(selectedSessionId)}
-                    >
-                      ✕ Elimina la sessione aperta
-                    </button>
-                  ))}
-              </div>
-            )}
-          </aside>
+        <D20Divider />
 
-          {/* EROI + TRASCRIZIONE */}
-          <div className="codex-main">
-            <div className="framed-panel heroes-panel">
-              <span className="corner tl" />
-              <span className="corner tr" />
-              <span className="corner bl" />
-              <span className="corner br" />
-              <div className="panel-title">
-                <IconParty /> Eroi della campagna
-              </div>
-              <div className="heroes-row">
-                {characters.map((c) => (
-                  <button
-                    key={c.id}
-                    className="hero-card"
-                    onClick={() => setSelectedChar(c)}
-                  >
-                    {c.avatar_url ? (
-                      <img
-                        src={c.avatar_url}
-                        alt={c.nome}
-                        className="hero-avatar"
-                      />
-                    ) : (
-                      <div className="hero-avatar placeholder">?</div>
-                    )}
-                    <div className="hero-name">{c.nome || "—"}</div>
-                    <div className="hero-class">{c.classe || ""}</div>
-                    {c.livello && <div className="hero-lvl">Liv. {c.livello}</div>}
-                  </button>
-                ))}
-                <button
-                  className="hero-card hero-add"
-                  onClick={() => setShowInvite((v) => !v)}
-                >
-                  <span className="hero-plus">+</span>
-                  <span className="hero-add-label">Aggiungi personaggio</span>
-                </button>
-              </div>
-
-              {showInvite && (
-                <div className="invite-inline">
-                  <div className="invite-head">
-                    <div>
-                      <div className="invite-label">Codice d'invito</div>
-                      <div className="invite-code">{inviteCode}</div>
-                    </div>
-                    <button className="ghost" onClick={copiaCodice}>
-                      {copied ? "Copiato ✓" : "Copia"}
-                    </button>
-                  </div>
-                  <p className="invite-hint">
-                    Dallo ai giocatori: lo inseriranno in "Unisciti a una
-                    campagna" per entrare e creare la loro scheda.
-                  </p>
-                  {members.length > 0 && (
-                    <div className="members">
-                      <div className="invite-label">
-                        Iscritti ({members.length})
-                      </div>
-                      <ul>
-                        {members.map((m) => (
-                          <li key={m.id}>{m.player_email}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div className="framed-panel transcript-panel">
-              <span className="corner tl" />
-              <span className="corner tr" />
-              <span className="corner bl" />
-              <span className="corner br" />
-              <div className="panel-title">
-                <IconMic /> Trascrizione della sessione
-              </div>
-              <div className="upload-row">
-                {recording ? (
-                  <button className="rec-btn is-recording" onClick={fermaRegistrazione}>
-                    <span className="rec-dot" />
-                    Ferma e trascrivi · {formatTime(recSeconds)}
-                  </button>
-                ) : (
-                  <button
-                    className="rec-btn"
-                    onClick={avviaRegistrazione}
-                    disabled={transcribing}
-                  >
-                    <span className="rec-dot" />
-                    Registra la sessione
-                  </button>
-                )}
-                <label className="upload-btn">
-                  {transcribing
-                    ? "Sto trascrivendo l'audio..."
-                    : "🎙 Carica un file audio"}
-                  <input
-                    type="file"
-                    accept="audio/*"
-                    onChange={trascriviAudio}
-                    disabled={transcribing || recording}
-                    hidden
-                  />
-                </label>
-              </div>
-              <textarea
-                value={transcript}
-                onChange={(e) => setTranscript(e.target.value)}
-                rows={12}
-                spellCheck={false}
-              />
-              <button
-                className="ghost ripristina"
-                onClick={() => {
-                  setTranscript(ESEMPIO);
-                  setCodex(null);
-                  setSaved(false);
-                  setError(null);
-                  setSelectedSessionId(null);
-                }}
-              >
-                Ripristina esempio
-              </button>
-            </div>
+        <div className="features">
+          <div className="feat">
+            <IconBook />
+            <h4>La memoria della tua storia</h4>
+            <p>
+              Conserva ogni evento, personaggio e luogo della tua campagna in un
+              unico grimorio.
+            </p>
           </div>
-        </div>
-
-        {/* BARRA AZIONI */}
-        <div className="codex-actions">
-          <button
-            className="action-btn"
-            onClick={generaBriefing}
-            disabled={briefingLoading}
-          >
-            <IconBriefing />
-            <span className="action-text">
-              <strong>
-                {briefingLoading ? "Preparo il briefing..." : "Genera il briefing"}
-              </strong>
-              <small>della prossima sessione</small>
-            </span>
-          </button>
-          <button
-            className="action-btn primary"
-            onClick={estrai}
-            disabled={loading}
-          >
+          <div className="feat">
             <IconD20 />
-            <span className="action-text">
-              <strong>{loading ? "Leggo le cronache..." : "Estrai il Codex"}</strong>
-              <small>dal testo qui sopra</small>
-            </span>
-          </button>
-          <button
-            className="action-btn"
-            onClick={salva}
-            disabled={saving || !codex}
-          >
-            <IconSave />
-            <span className="action-text">
-              <strong>{saving ? "Salvo..." : "Salva sessione"}</strong>
-              <small>{codex ? "nella campagna" : "prima estrai il Codex"}</small>
-            </span>
-          </button>
+            <h4>Strumenti per il Dungeon Master</h4>
+            <p>
+              Trascrivi le sessioni, genera briefing e organizza le tue
+              avventure con strumenti potenti.
+            </p>
+          </div>
+          <div className="feat">
+            <IconDragon />
+            <h4>Il tuo mondo, sempre vivo</h4>
+            <p>
+              Tutto ciò che accade al tavolo, sempre a portata di mano, ovunque
+              tu sia.
+            </p>
+          </div>
         </div>
-
-        {saved && (
-          <div className="saved-banner">✓ Sessione salvata nella campagna</div>
-        )}
-        {error && <div className="error">{error}</div>}
-        {briefingError && <div className="error">{briefingError}</div>}
-
-        {briefing && !briefing.vuoto && (
-          <div className="briefing">
-            <h3>Briefing pre-sessione</h3>
-            {briefing.riepilogo && (
-              <>
-                <div className="brief-label">L'ultima volta</div>
-                <p className="brief-text">{briefing.riepilogo}</p>
-              </>
-            )}
-            {briefing.fili_aperti && briefing.fili_aperti.length > 0 && (
-              <>
-                <div className="brief-label">Fili in sospeso</div>
-                <ul className="brief-list">
-                  {briefing.fili_aperti.map((f, i) => (
-                    <li key={i}>{f.testo}</li>
-                  ))}
-                </ul>
-              </>
-            )}
-            {briefing.npc_di_ritorno && briefing.npc_di_ritorno.length > 0 && (
-              <>
-                <div className="brief-label">Potrebbero tornare</div>
-                <ul className="brief-list">
-                  {briefing.npc_di_ritorno.map((n, i) => (
-                    <li key={i}>
-                      <strong>{n.nome}</strong> — {n.motivo}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-            {briefing.gancio && (
-              <div className="brief-hook">
-                <strong>Gancio pronto:</strong> {briefing.gancio}
-              </div>
-            )}
-          </div>
-        )}
-
-        {codex && (
-          <div className="results">
-            {CATEGORIE.map(({ chiave, titolo }) => {
-              const items = codex[chiave] || [];
-              if (items.length === 0) return null;
-              return (
-                <section key={chiave}>
-                  <div className="cat-head">
-                    <h2>{titolo}</h2>
-                    <span>{items.length}</span>
-                  </div>
-                  <ul>
-                    {items.map((item, i) => {
-                      const segreto = chiave === "npc" && item.segreto;
-                      return (
-                        <li key={i} className={segreto ? "secret" : ""}>
-                          {item.testo ? (
-                            <span>{item.testo}</span>
-                          ) : (
-                            <>
-                              <div className="nome-row">
-                                <strong>{item.nome}</strong>
-                                {segreto && <span className="badge">Solo DM</span>}
-                              </div>
-                              {item.nota && <p>{item.nota}</p>}
-                            </>
-                          )}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </section>
-              );
-            })}
-          </div>
-        )}
 
         <D20Divider />
       </div>
-
-      {selectedChar && (
-        <div
-          className="char-modal-overlay"
-          onClick={() => setSelectedChar(null)}
-        >
-          <div className="char-modal" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="char-modal-close"
-              onClick={() => setSelectedChar(null)}
-            >
-              ✕
-            </button>
-            <div className="char-modal-head">
-              {selectedChar.avatar_url ? (
-                <img
-                  src={selectedChar.avatar_url}
-                  alt={selectedChar.nome}
-                  className="char-modal-avatar"
-                />
-              ) : (
-                <div className="char-modal-avatar placeholder">?</div>
-              )}
-              <div>
-                <h3 className="char-modal-name">
-                  {selectedChar.nome || "Senza nome"}
-                </h3>
-                <div className="char-modal-sub">
-                  {[
-                    selectedChar.razza,
-                    selectedChar.classe,
-                    selectedChar.livello ? `Livello ${selectedChar.livello}` : "",
-                  ]
-                    .filter(Boolean)
-                    .join("  ·  ")}
-                </div>
-              </div>
-            </div>
-            <div className="char-modal-body">
-              {selectedChar.descrizione && (
-                <div className="char-modal-section">
-                  <div className="char-modal-label">Aspetto e descrizione</div>
-                  <p>{selectedChar.descrizione}</p>
-                </div>
-              )}
-              {selectedChar.background && (
-                <div className="char-modal-section">
-                  <div className="char-modal-label">Background</div>
-                  <p>{selectedChar.background}</p>
-                </div>
-              )}
-              {selectedChar.note && (
-                <div className="char-modal-section">
-                  <div className="char-modal-label">Note</div>
-                  <p>{selectedChar.note}</p>
-                </div>
-              )}
-              {!selectedChar.descrizione &&
-                !selectedChar.background &&
-                !selectedChar.note && (
-                  <p className="char-modal-empty">
-                    Questo giocatore non ha ancora compilato la scheda.
-                  </p>
-                )}
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
