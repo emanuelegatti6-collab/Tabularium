@@ -100,6 +100,7 @@ export default function CampagnaWorkspace() {
   const chunksRef = useRef([]);
   const streamRef = useRef(null);
   const timerRef = useRef(null);
+  const wakeLockRef = useRef(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
@@ -195,6 +196,39 @@ export default function CampagnaWorkspace() {
     e.target.value = "";
   }
 
+  async function richiediWakeLock() {
+    try {
+      if ("wakeLock" in navigator) {
+        const wl = await navigator.wakeLock.request("screen");
+        wl.addEventListener("release", () => {
+          if (wakeLockRef.current === wl) wakeLockRef.current = null;
+        });
+        wakeLockRef.current = wl;
+      }
+    } catch (e) {}
+  }
+
+  async function rilasciaWakeLock() {
+    try {
+      if (wakeLockRef.current) {
+        await wakeLockRef.current.release();
+        wakeLockRef.current = null;
+      }
+    } catch (e) {}
+  }
+
+  // Se torni sull'app dopo averla nascosta, riprendi a tenere acceso lo schermo.
+  useEffect(() => {
+    if (!recording) return;
+    const onVis = async () => {
+      if (document.visibilityState === "visible" && !wakeLockRef.current) {
+        await richiediWakeLock();
+      }
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, [recording]);
+
   async function avviaRegistrazione() {
     setError(null);
     try {
@@ -232,6 +266,7 @@ export default function CampagnaWorkspace() {
       mr.start();
       setRecording(true);
       setRecSeconds(0);
+      richiediWakeLock();
       timerRef.current = setInterval(
         () => setRecSeconds((s) => s + 1),
         1000
@@ -246,6 +281,7 @@ export default function CampagnaWorkspace() {
   function fermaRegistrazione() {
     if (timerRef.current) clearInterval(timerRef.current);
     setRecording(false);
+    rilasciaWakeLock();
     if (mediaRef.current && mediaRef.current.state !== "inactive") {
       mediaRef.current.stop();
     }
@@ -539,6 +575,12 @@ export default function CampagnaWorkspace() {
                   />
                 </label>
               </div>
+              {recording && (
+                <p className="rec-hint">
+                  Schermo tenuto acceso. Resta in quest'app e, se sei al
+                  telefono, tienilo sotto carica.
+                </p>
+              )}
               <textarea
                 value={transcript}
                 onChange={(e) => setTranscript(e.target.value)}
