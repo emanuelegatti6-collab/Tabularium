@@ -2369,3 +2369,56 @@ button.plaque {
 .speakers-apply {
   font-size: 13px;
 }
+
+/* --- Voci: campione + nomi a pulsante --- */
+.speaker-row-v2 {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+.speaker-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.speaker-head .speaker-label {
+  min-width: 96px;
+}
+.speaker-head input {
+  flex: 1;
+  min-width: 0;
+}
+.speaker-sample {
+  color: var(--muted);
+  font-size: 13px;
+  font-style: italic;
+  margin-top: 9px;
+  line-height: 1.5;
+}
+.speaker-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.speaker-chip {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 5px 13px;
+  font-size: 12px;
+  font-family: var(--body);
+  cursor: pointer;
+  box-shadow: none;
+}
+.speaker-chip:hover {
+  border-color: var(--border-strong);
+}
+.speaker-chip.on {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #241704;
+}

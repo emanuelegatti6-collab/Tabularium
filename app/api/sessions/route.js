@@ -21,7 +21,7 @@ export async function GET(request) {
   try {
     const { data, error } = await supabase
       .from("sessions")
-      .select("id, title, created_at, codex")
+      .select("id, title, created_at, codex, transcript")
       .eq("campaign_id", campaignId)
       .order("created_at", { ascending: false });
     if (error) throw error;

@@ -350,6 +350,8 @@ export default function CampagnaWorkspace() {
 
   function apriSessione(s) {
     setCodex(s.codex);
+    setTranscript(s.transcript || "");
+    setSpeakerNames({});
     setSaved(true);
     setSelectedSessionId(s.id);
     setError(null);
@@ -416,6 +418,14 @@ export default function CampagnaWorkspace() {
   const interlocutori = Array.from(
     new Set(transcript.match(/Interlocutore \d+/g) || [])
   );
+
+  const campioni = {};
+  transcript.split("\n").forEach((riga) => {
+    const m = riga.match(/^(Interlocutore \d+):\s*(.*)$/);
+    if (m && m[2] && !campioni[m[1]]) campioni[m[1]] = m[2];
+  });
+
+  const nomiPronti = ["DM", ...characters.map((c) => c.nome).filter(Boolean)];
 
   return (
     <main className="codex-page">
@@ -637,9 +647,9 @@ export default function CampagnaWorkspace() {
                   <div className="speakers-title">
                     Chi è chi? Dai un nome alle voci
                   </div>
-                  <div className="speakers-grid">
-                    {interlocutori.map((label) => (
-                      <div key={label} className="speaker-row">
+                  {interlocutori.map((label) => (
+                    <div key={label} className="speaker-row-v2">
+                      <div className="speaker-head">
                         <span className="speaker-label">{label}</span>
                         <input
                           list="nomi-party"
@@ -653,13 +663,36 @@ export default function CampagnaWorkspace() {
                           placeholder="Nome reale…"
                         />
                       </div>
-                    ))}
-                  </div>
+                      {campioni[label] && (
+                        <div className="speaker-sample">
+                          “{campioni[label].slice(0, 120)}
+                          {campioni[label].length > 120 ? "…" : ""}”
+                        </div>
+                      )}
+                      {nomiPronti.length > 0 && (
+                        <div className="speaker-chips">
+                          {nomiPronti.map((n) => (
+                            <button
+                              key={n}
+                              className={
+                                "speaker-chip" +
+                                (speakerNames[label] === n ? " on" : "")
+                              }
+                              onClick={() =>
+                                setSpeakerNames((m) => ({ ...m, [label]: n }))
+                              }
+                            >
+                              {n}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                   <datalist id="nomi-party">
-                    <option value="DM" />
-                    {characters.map((c) =>
-                      c.nome ? <option key={c.id} value={c.nome} /> : null
-                    )}
+                    {nomiPronti.map((n) => (
+                      <option key={n} value={n} />
+                    ))}
                   </datalist>
                   <button
                     className="ghost speakers-apply"
