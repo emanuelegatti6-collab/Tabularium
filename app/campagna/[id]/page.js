@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "../../../utils/supabase/client";
@@ -40,6 +40,14 @@ const IconMic = () => <Svg><><rect x="9" y="3" width="6" height="11" rx="3" /><p
 const IconBriefing = () => <Svg cls="action-ico"><><path d="M12 6C9 4 5 4 3 5v14c2-1 6-1 9 1 3-2 7-2 9-1V5c-2-1-6-1-9 1Z" /><path d="M12 6v14" /></></Svg>;
 const IconD20 = () => <Svg cls="action-ico"><><polygon points="12,2 20,7 20,17 12,22 4,17 4,7" /><polygon points="12,7 17,15.5 7,15.5" /></></Svg>;
 const IconSave = () => <Svg cls="action-ico"><><path d="M5 4h11l3 3v13H5z" /><path d="M8 4v5h7" /><rect x="8" y="13" width="8" height="6" /></></Svg>;
+
+function formatTime(s) {
+  const m = Math.floor(s / 60)
+    .toString()
+    .padStart(2, "0");
+  const sec = (s % 60).toString().padStart(2, "0");
+  return m + ":" + sec;
+}
 
 function D20Divider() {
   return (
@@ -86,6 +94,12 @@ export default function CampagnaWorkspace() {
   const [briefingError, setBriefingError] = useState(null);
 
   const [transcribing, setTranscribing] = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [recSeconds, setRecSeconds] = useState(0);
+  const mediaRef = useRef(null);
+  const chunksRef = useRef([]);
+  const streamRef = useRef(null);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
@@ -146,17 +160,15 @@ export default function CampagnaWorkspace() {
     router.push("/");
   }
 
-  async function trascriviAudio(e) {
-    const file = e.target.files[0];
-    if (!file) return;
+  async function trascriviSorgente(blob, nomeFile) {
     setTranscribing(true);
     setError(null);
     try {
-      const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+      const safeName = nomeFile.replace(/[^a-zA-Z0-9.\-_]/g, "_");
       const path = `${user.id}/${Date.now()}-${safeName}`;
       const { error: upErr } = await supabase.storage
         .from("audio")
-        .upload(path, file);
+        .upload(path, blob);
       if (upErr) throw upErr;
 
       const res = await fetch("/api/transcribe", {
@@ -169,11 +181,73 @@ export default function CampagnaWorkspace() {
       setTranscript(data.text || "");
     } catch (err) {
       setError(
-        "Trascrizione fallita. Controlla la dimensione del file (max 50 MB) e riprova."
+        "Trascrizione fallita. Se la sessione è molto lunga potrebbe superare i 50 MB: riprova o accorciala."
       );
     } finally {
       setTranscribing(false);
-      e.target.value = "";
+    }
+  }
+
+  async function trascriviAudio(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    await trascriviSorgente(file, file.name);
+    e.target.value = "";
+  }
+
+  async function avviaRegistrazione() {
+    setError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      const tipi = [
+        "audio/webm;codecs=opus",
+        "audio/webm",
+        "audio/mp4",
+        "audio/ogg",
+      ];
+      const mime =
+        typeof MediaRecorder !== "undefined"
+          ? tipi.find((t) => MediaRecorder.isTypeSupported(t)) || ""
+          : "";
+      const opts = { audioBitsPerSecond: 24000 };
+      if (mime) opts.mimeType = mime;
+
+      const mr = new MediaRecorder(stream, opts);
+      chunksRef.current = [];
+      mr.ondataavailable = (ev) => {
+        if (ev.data && ev.data.size) chunksRef.current.push(ev.data);
+      };
+      mr.onstop = async () => {
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach((t) => t.stop());
+        }
+        const blob = new Blob(chunksRef.current, {
+          type: mime || "audio/webm",
+        });
+        const est = mime && mime.includes("mp4") ? "m4a" : "webm";
+        await trascriviSorgente(blob, `registrazione.${est}`);
+      };
+      mediaRef.current = mr;
+      mr.start();
+      setRecording(true);
+      setRecSeconds(0);
+      timerRef.current = setInterval(
+        () => setRecSeconds((s) => s + 1),
+        1000
+      );
+    } catch (err) {
+      setError(
+        "Non riesco ad accedere al microfono. Controlla i permessi del browser."
+      );
+    }
+  }
+
+  function fermaRegistrazione() {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setRecording(false);
+    if (mediaRef.current && mediaRef.current.state !== "inactive") {
+      mediaRef.current.stop();
     }
   }
 
@@ -437,15 +511,30 @@ export default function CampagnaWorkspace() {
                 <IconMic /> Trascrizione della sessione
               </div>
               <div className="upload-row">
+                {recording ? (
+                  <button className="rec-btn is-recording" onClick={fermaRegistrazione}>
+                    <span className="rec-dot" />
+                    Ferma e trascrivi · {formatTime(recSeconds)}
+                  </button>
+                ) : (
+                  <button
+                    className="rec-btn"
+                    onClick={avviaRegistrazione}
+                    disabled={transcribing}
+                  >
+                    <span className="rec-dot" />
+                    Registra la sessione
+                  </button>
+                )}
                 <label className="upload-btn">
                   {transcribing
                     ? "Sto trascrivendo l'audio..."
-                    : "🎙 Carica l'audio della sessione"}
+                    : "🎙 Carica un file audio"}
                   <input
                     type="file"
                     accept="audio/*"
                     onChange={trascriviAudio}
-                    disabled={transcribing}
+                    disabled={transcribing || recording}
                     hidden
                   />
                 </label>
