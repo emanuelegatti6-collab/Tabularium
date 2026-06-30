@@ -80,6 +80,7 @@ export default function CampagnaWorkspace() {
   const [selectedChar, setSelectedChar] = useState(null);
 
   const [transcript, setTranscript] = useState(ESEMPIO);
+  const [speakerNames, setSpeakerNames] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [codex, setCodex] = useState(null);
@@ -398,7 +399,23 @@ export default function CampagnaWorkspace() {
     setSaved(false);
   }
 
+  function applicaNomi(interlocutori) {
+    let t = transcript;
+    interlocutori.forEach((label) => {
+      const nome = (speakerNames[label] || "").trim();
+      if (nome) {
+        t = t.split(label + ":").join(nome + ":");
+      }
+    });
+    setTranscript(t);
+    setSpeakerNames({});
+  }
+
   if (user === undefined || !ready) return null;
+
+  const interlocutori = Array.from(
+    new Set(transcript.match(/Interlocutore \d+/g) || [])
+  );
 
   return (
     <main className="codex-page">
@@ -614,6 +631,44 @@ export default function CampagnaWorkspace() {
                 rows={12}
                 spellCheck={false}
               />
+
+              {interlocutori.length > 0 && (
+                <div className="speakers-box">
+                  <div className="speakers-title">
+                    Chi è chi? Dai un nome alle voci
+                  </div>
+                  <div className="speakers-grid">
+                    {interlocutori.map((label) => (
+                      <div key={label} className="speaker-row">
+                        <span className="speaker-label">{label}</span>
+                        <input
+                          list="nomi-party"
+                          value={speakerNames[label] || ""}
+                          onChange={(e) =>
+                            setSpeakerNames((m) => ({
+                              ...m,
+                              [label]: e.target.value,
+                            }))
+                          }
+                          placeholder="Nome reale…"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <datalist id="nomi-party">
+                    <option value="DM" />
+                    {characters.map((c) =>
+                      c.nome ? <option key={c.id} value={c.nome} /> : null
+                    )}
+                  </datalist>
+                  <button
+                    className="ghost speakers-apply"
+                    onClick={() => applicaNomi(interlocutori)}
+                  >
+                    Applica i nomi alla trascrizione
+                  </button>
+                </div>
+              )}
               <button
                 className="ghost ripristina"
                 onClick={() => {
